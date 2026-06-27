@@ -115,7 +115,7 @@ export const ka = {
   common: {
     error: "შეცდომა",
     firebaseNotConfigured:
-      "Firebase არ არის დაკავშირებული. Firebase Console → Service Accounts → დააგენერირე private key და ჩაწერე FIREBASE_SERVICE_ACCOUNT_JSON .env.local ფაილში.",
+      "Firebase Admin არ არის დაკავშირებული. Vercel → Settings → Environment Variables → დაამატე FIREBASE_SERVICE_ACCOUNT_JSON და გადააკეთე Deploy.",
     retry: "თავიდან",
     cancel: "გაუქმება",
     loading: "იტვირთება...",

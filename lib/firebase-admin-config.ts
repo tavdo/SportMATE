@@ -2,12 +2,19 @@ import { readFileSync, existsSync } from "fs";
 import { join } from "path";
 import { firebaseClientConfig } from "./firebase-config";
 
+function normalizePrivateKey(key: string): string {
+  let k = key.trim();
+  if ((k.startsWith('"') && k.endsWith('"')) || (k.startsWith("'") && k.endsWith("'"))) {
+    k = k.slice(1, -1);
+  }
+  return k.replace(/\\n/g, "\n");
+}
+
 function parseServiceAccountJson(raw: string) {
   const trimmed = raw.trim();
   try {
     return JSON.parse(trimmed);
   } catch {
-    // Vercel sometimes stores base64-encoded JSON
     try {
       return JSON.parse(Buffer.from(trimmed, "base64").toString("utf8"));
     } catch {
@@ -17,15 +24,21 @@ function parseServiceAccountJson(raw: string) {
 }
 
 export function isFirebaseAdminConfigured(): boolean {
-  if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) return true;
+  const json = process.env.FIREBASE_SERVICE_ACCOUNT_JSON?.trim();
+  if (json && json.length > 20) return true;
+
   const filePath =
     process.env.FIREBASE_SERVICE_ACCOUNT_PATH ??
     join(process.cwd(), "firebase-service-account.json");
   if (existsSync(filePath)) return true;
+
+  const projectId =
+    process.env.FIREBASE_PROJECT_ID ?? firebaseClientConfig.projectId;
+  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL?.trim();
+  const privateKey = process.env.FIREBASE_PRIVATE_KEY?.trim();
+
   return Boolean(
-    (process.env.FIREBASE_PROJECT_ID ?? firebaseClientConfig.projectId) &&
-      process.env.FIREBASE_CLIENT_EMAIL &&
-      process.env.FIREBASE_PRIVATE_KEY
+    projectId && clientEmail && privateKey && privateKey.length > 40
   );
 }
 
@@ -36,8 +49,13 @@ export function assertFirebaseAdminConfigured(): void {
 }
 
 export function getServiceAccount() {
-  if (process.env.FIREBASE_SERVICE_ACCOUNT_JSON) {
-    return parseServiceAccountJson(process.env.FIREBASE_SERVICE_ACCOUNT_JSON);
+  const json = process.env.FIREBASE_SERVICE_ACCOUNT_JSON?.trim();
+  if (json && json.length > 20) {
+    const account = parseServiceAccountJson(json);
+    if (account.private_key) {
+      account.private_key = normalizePrivateKey(account.private_key);
+    }
+    return account;
   }
 
   const filePath =
@@ -45,13 +63,19 @@ export function getServiceAccount() {
     join(process.cwd(), "firebase-service-account.json");
 
   if (existsSync(filePath)) {
-    return JSON.parse(readFileSync(filePath, "utf8"));
+    const account = JSON.parse(readFileSync(filePath, "utf8"));
+    if (account.private_key) {
+      account.private_key = normalizePrivateKey(account.private_key);
+    }
+    return account;
   }
 
   const projectId =
     process.env.FIREBASE_PROJECT_ID ?? firebaseClientConfig.projectId;
-  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL;
-  const privateKey = process.env.FIREBASE_PRIVATE_KEY?.replace(/\\n/g, "\n");
+  const clientEmail = process.env.FIREBASE_CLIENT_EMAIL?.trim();
+  const privateKey = process.env.FIREBASE_PRIVATE_KEY
+    ? normalizePrivateKey(process.env.FIREBASE_PRIVATE_KEY)
+    : undefined;
 
   if (!projectId || !clientEmail || !privateKey) {
     throw new Error("FIREBASE_NOT_CONFIGURED");
