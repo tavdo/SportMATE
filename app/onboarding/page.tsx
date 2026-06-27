@@ -109,7 +109,7 @@ export default function OnboardingPage() {
         } else {
           await signInWithPhone(normalized, password);
         }
-        setStep("profile");
+        // Profile step only if new user (useEffect redirects existing users to /)
       } catch (err: unknown) {
         const code = err && typeof err === "object" && "code" in err ? String(err.code) : "";
         setError(mapAuthError(code, t, true));
@@ -131,7 +131,7 @@ export default function OnboardingPage() {
       } else {
         await signInWithEmail(email, password);
       }
-      setStep("profile");
+      // Profile step only if new user (useEffect redirects existing users to /)
     } catch (err: unknown) {
       const code = err && typeof err === "object" && "code" in err ? String(err.code) : "";
       setError(mapAuthError(code, t, false));
