@@ -7,6 +7,7 @@ import { cn } from "@/lib/utils";
 const locales: { id: Locale; label: string }[] = [
   { id: "ka", label: "ქარ" },
   { id: "en", label: "EN" },
+  { id: "ru", label: "РУ" },
 ];
 
 export function LanguageSwitcher({ className }: { className?: string }) {

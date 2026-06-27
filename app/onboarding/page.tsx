@@ -10,11 +10,10 @@ import {
   normalizeGeorgianDigits,
   isValidGeorgianMobile,
   GEORGIA_DIAL_CODE,
-  formatDisplayPhone,
 } from "@/lib/phone";
 import {
-  sendPhoneOtp,
-  confirmPhoneOtp,
+  signInWithPhone,
+  registerWithPhone,
   signInWithEmail,
   registerWithEmail,
 } from "@/lib/auth-client";
@@ -26,18 +25,23 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
 const sports: SportType[] = ["football", "basketball", "volleyball"];
-const RECAPTCHA_ID = "recaptcha-container";
 
 type AuthMethod = "phone" | "email";
-type Step = "auth" | "otp" | "profile";
+type Step = "auth" | "profile";
 
 function isValidEmail(email: string): boolean {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
-function mapEmailError(code: string, t: ReturnType<typeof useT>): string {
-  if (code === "auth/email-already-in-use") return t.onboarding.emailInUse;
-  if (code === "auth/invalid-credential" || code === "auth/wrong-password" || code === "auth/user-not-found") {
+function mapAuthError(code: string, t: ReturnType<typeof useT>, isPhone: boolean): string {
+  if (code === "auth/email-already-in-use") {
+    return isPhone ? t.onboarding.phoneInUse : t.onboarding.emailInUse;
+  }
+  if (
+    code === "auth/invalid-credential" ||
+    code === "auth/wrong-password" ||
+    code === "auth/user-not-found"
+  ) {
     return t.onboarding.wrongCredentials;
   }
   return t.common.error;
@@ -50,12 +54,11 @@ export default function OnboardingPage() {
   const { player, setPlayer, loading: playerLoading } = usePlayer();
 
   const [authMethod, setAuthMethod] = useState<AuthMethod>("phone");
-  const [emailMode, setEmailMode] = useState<"signin" | "signup">("signin");
+  const [authMode, setAuthMode] = useState<"signin" | "signup">("signin");
   const [step, setStep] = useState<Step>("auth");
   const [digits, setDigits] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [otp, setOtp] = useState("");
   const [nickname, setNickname] = useState("");
   const [selectedSports, setSelectedSports] = useState<SportType[]>([]);
   const [color, setColor] = useState(AVATAR_COLORS[0]);
@@ -83,43 +86,47 @@ export default function OnboardingPage() {
     setError("");
   }
 
-  async function handleSendCode(e: React.FormEvent) {
-    e.preventDefault();
-    setError("");
-    const normalized = normalizeGeorgianDigits(digits);
-    if (!isValidGeorgianMobile(normalized)) {
-      setError(t.onboarding.invalidPhone);
-      return;
-    }
-
-    setLoading(true);
-    try {
-      await sendPhoneOtp(normalized, RECAPTCHA_ID);
-      setStep("otp");
-    } catch (err) {
-      const msg = err instanceof Error ? err.message : t.common.error;
-      setError(msg);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleEmailAuth(e: React.FormEvent) {
+  async function handleAuth(e: React.FormEvent) {
     e.preventDefault();
     setError("");
 
-    if (!isValidEmail(email)) {
-      setError(t.onboarding.invalidEmail);
-      return;
-    }
     if (password.length < 6) {
       setError(t.onboarding.passwordRequired);
       return;
     }
 
+    if (authMethod === "phone") {
+      const normalized = normalizeGeorgianDigits(digits);
+      if (!isValidGeorgianMobile(normalized)) {
+        setError(t.onboarding.invalidPhone);
+        return;
+      }
+
+      setLoading(true);
+      try {
+        if (authMode === "signup") {
+          await registerWithPhone(normalized, password);
+        } else {
+          await signInWithPhone(normalized, password);
+        }
+        setStep("profile");
+      } catch (err: unknown) {
+        const code = err && typeof err === "object" && "code" in err ? String(err.code) : "";
+        setError(mapAuthError(code, t, true));
+      } finally {
+        setLoading(false);
+      }
+      return;
+    }
+
+    if (!isValidEmail(email)) {
+      setError(t.onboarding.invalidEmail);
+      return;
+    }
+
     setLoading(true);
     try {
-      if (emailMode === "signup") {
+      if (authMode === "signup") {
         await registerWithEmail(email, password);
       } else {
         await signInWithEmail(email, password);
@@ -127,26 +134,7 @@ export default function OnboardingPage() {
       setStep("profile");
     } catch (err: unknown) {
       const code = err && typeof err === "object" && "code" in err ? String(err.code) : "";
-      setError(mapEmailError(code, t));
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function handleVerifyOtp(e: React.FormEvent) {
-    e.preventDefault();
-    setError("");
-    if (otp.trim().length < 6) {
-      setError(t.onboarding.otpRequired);
-      return;
-    }
-
-    setLoading(true);
-    try {
-      await confirmPhoneOtp(otp.trim());
-      setStep("profile");
-    } catch {
-      setError(t.common.error);
+      setError(mapAuthError(code, t, false));
     } finally {
       setLoading(false);
     }
@@ -193,17 +181,14 @@ export default function OnboardingPage() {
   const subtitle =
     step === "profile"
       ? t.onboarding.profileStep
-      : step === "otp"
-        ? `${GEORGIA_DIAL_CODE} ${formatDisplayPhone(digits)}`
-        : authMethod === "phone"
-          ? t.onboarding.phoneSubtitle
-          : emailMode === "signup"
-            ? t.onboarding.signUp
-            : t.onboarding.signIn;
+      : authMethod === "phone"
+        ? t.onboarding.phoneSubtitle
+        : authMode === "signup"
+          ? t.onboarding.signUp
+          : t.onboarding.signIn;
 
   return (
     <div className="relative flex min-h-dvh flex-col justify-center px-6 py-12">
-      <div id={RECAPTCHA_ID} />
       <div className="absolute right-4 top-4">
         <LanguageSwitcher />
       </div>
@@ -236,8 +221,8 @@ export default function OnboardingPage() {
             ))}
           </div>
 
-          {authMethod === "phone" ? (
-            <form onSubmit={handleSendCode} className="space-y-6">
+          <form onSubmit={handleAuth} className="space-y-4">
+            {authMethod === "phone" ? (
               <div className="space-y-2">
                 <Label>{t.onboarding.phoneTitle}</Label>
                 <div className="flex gap-2">
@@ -256,13 +241,7 @@ export default function OnboardingPage() {
                   />
                 </div>
               </div>
-              {error && <p className="text-sm text-destructive">{error}</p>}
-              <Button type="submit" size="lg" className="w-full" disabled={loading}>
-                {loading ? t.common.loading : t.onboarding.sendCode}
-              </Button>
-            </form>
-          ) : (
-            <form onSubmit={handleEmailAuth} className="space-y-4">
+            ) : (
               <div className="space-y-2">
                 <Label htmlFor="email">{t.onboarding.emailLabel}</Label>
                 <Input
@@ -275,72 +254,43 @@ export default function OnboardingPage() {
                   autoFocus
                 />
               </div>
-              <div className="space-y-2">
-                <Label htmlFor="password">{t.onboarding.passwordLabel}</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  autoComplete={emailMode === "signup" ? "new-password" : "current-password"}
-                  placeholder={t.onboarding.passwordPlaceholder}
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  minLength={6}
-                />
-              </div>
-              {error && <p className="text-sm text-destructive">{error}</p>}
-              <Button type="submit" size="lg" className="w-full" disabled={loading}>
-                {loading
-                  ? t.common.loading
-                  : emailMode === "signup"
-                    ? t.onboarding.signUp
-                    : t.onboarding.signIn}
-              </Button>
-              <button
-                type="button"
-                className="w-full text-center text-sm text-primary underline"
-                onClick={() => {
-                  setEmailMode((m) => (m === "signin" ? "signup" : "signin"));
-                  resetAuthError();
-                }}
-              >
-                {emailMode === "signin" ? t.onboarding.switchToSignUp : t.onboarding.switchToSignIn}
-              </button>
-            </form>
-          )}
-        </>
-      )}
+            )}
 
-      {step === "otp" && (
-        <form onSubmit={handleVerifyOtp} className="space-y-6">
-          <div className="space-y-2">
-            <Label htmlFor="otp">{t.onboarding.otpLabel}</Label>
-            <Input
-              id="otp"
-              inputMode="numeric"
-              placeholder="123456"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
-              maxLength={6}
-              autoFocus
-            />
-          </div>
-          {error && <p className="text-sm text-destructive">{error}</p>}
-          <Button type="submit" size="lg" className="w-full" disabled={loading}>
-            {loading ? t.common.loading : t.onboarding.verify}
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            className="w-full"
-            onClick={() => {
-              setStep("auth");
-              setOtp("");
-              setError("");
-            }}
-          >
-            {t.onboarding.changePhone}
-          </Button>
-        </form>
+            <div className="space-y-2">
+              <Label htmlFor="password">{t.onboarding.passwordLabel}</Label>
+              <Input
+                id="password"
+                type="password"
+                autoComplete={authMode === "signup" ? "new-password" : "current-password"}
+                placeholder={t.onboarding.passwordPlaceholder}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                minLength={6}
+              />
+            </div>
+
+            {error && <p className="text-sm text-destructive">{error}</p>}
+
+            <Button type="submit" size="lg" className="w-full" disabled={loading}>
+              {loading
+                ? t.common.loading
+                : authMode === "signup"
+                  ? t.onboarding.signUp
+                  : t.onboarding.signIn}
+            </Button>
+
+            <button
+              type="button"
+              className="w-full text-center text-sm text-primary underline"
+              onClick={() => {
+                setAuthMode((m) => (m === "signin" ? "signup" : "signin"));
+                resetAuthError();
+              }}
+            >
+              {authMode === "signin" ? t.onboarding.switchToSignUp : t.onboarding.switchToSignIn}
+            </button>
+          </form>
+        </>
       )}
 
       {step === "profile" && (

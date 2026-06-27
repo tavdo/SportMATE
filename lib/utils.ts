@@ -8,7 +8,9 @@ export function cn(...inputs: ClassValue[]) {
 import type { Locale } from "@/lib/i18n";
 
 function localeTag(locale: Locale): string {
-  return locale === "en" ? "en-GB" : "ka-GE";
+  if (locale === "en") return "en-GB";
+  if (locale === "ru") return "ru-RU";
+  return "ka-GE";
 }
 
 export function formatDate(date: Date | string, locale: Locale = "ka"): string {

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isAdminUser } from "./auth-server";
 import { getAdminAuth } from "./auth-server";
+import { resolveAuthPhone } from "./phone";
 
 export interface AuthUser {
   uid: string;
@@ -19,10 +20,12 @@ export async function requireUser(req: NextRequest): Promise<AuthResult> {
   try {
     const token = authHeader.slice(7);
     const decoded = await getAdminAuth().verifyIdToken(token);
+    const email = decoded.email ?? "";
+    const phone = resolveAuthPhone(decoded.phone_number, email);
     return {
       uid: decoded.uid,
-      phone: decoded.phone_number ?? "",
-      email: decoded.email ?? "",
+      phone,
+      email,
     };
   } catch {
     return NextResponse.json({ error: "Invalid token" }, { status: 401 });
