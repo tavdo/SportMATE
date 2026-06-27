@@ -3,6 +3,8 @@ import withPWA from "next-pwa";
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  // firebase-admin must stay external on Vercel serverless
+  serverExternalPackages: ["firebase-admin"],
 };
 
 export default withPWA({

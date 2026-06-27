@@ -1,9 +1,22 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { getAdminDb } from "@/lib/firebase-admin";
 import { ka } from "@/lib/i18n/ka";
 import { SEED_VENUES } from "@/lib/seed-venues";
 
-export async function POST() {
+export async function POST(req: NextRequest) {
+  const setupSecret = process.env.SETUP_SECRET;
+  if (setupSecret) {
+    const auth = req.headers.get("x-setup-secret");
+    if (auth !== setupSecret) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+  } else if (process.env.VERCEL === "1") {
+    return NextResponse.json(
+      { error: "Set SETUP_SECRET env var to run seed on Vercel" },
+      { status: 403 }
+    );
+  }
+
   try {
     const db = getAdminDb();
     const batch = db.batch();
