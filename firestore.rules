@@ -1,0 +1,10 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Public read-only; all writes go through Next.js API (Firebase Admin SDK)
+    match /{document=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+  }
+}
