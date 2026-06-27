@@ -2,7 +2,7 @@
 
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { ka } from "@/lib/i18n/ka";
+import { useT } from "@/lib/hooks/useLocale";
 
 interface TimePickerProps {
   date: string;
@@ -17,10 +17,12 @@ export function TimePicker({
   onDateChange,
   onTimeChange,
 }: TimePickerProps) {
+  const t = useT();
+
   return (
     <div className="grid grid-cols-2 gap-4">
       <div className="space-y-2">
-        <Label htmlFor="date">{ka.create.date}</Label>
+        <Label htmlFor="date">{t.create.date}</Label>
         <Input
           id="date"
           type="date"
@@ -30,7 +32,7 @@ export function TimePicker({
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="time">{ka.create.time}</Label>
+        <Label htmlFor="time">{t.create.time}</Label>
         <Input
           id="time"
           type="time"

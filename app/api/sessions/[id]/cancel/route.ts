@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAdminDb } from "@/lib/firebase-admin";
 import { docData } from "@/lib/firestore/helpers";
+import { requireUser, isAuthUser } from "@/lib/request-auth";
 import type { SessionFeed } from "@/lib/types";
 
 export async function POST(
@@ -8,10 +9,8 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   try {
-    const deviceId = req.headers.get("x-device-id");
-    if (!deviceId) {
-      return NextResponse.json({ error: "device_id required" }, { status: 401 });
-    }
+    const auth = await requireUser(req);
+    if (!isAuthUser(auth)) return auth;
 
     const db = getAdminDb();
     const sessionRef = db.collection("sessions").doc(params.id);
@@ -21,7 +20,7 @@ export async function POST(
       return NextResponse.json({ error: "Session not found" }, { status: 404 });
     }
 
-    if (session.host_id !== deviceId) {
+    if (session.host_id !== auth.uid) {
       return NextResponse.json({ error: "Only host can cancel" }, { status: 403 });
     }
 

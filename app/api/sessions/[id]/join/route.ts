@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAdminDb } from "@/lib/firebase-admin";
 import { docData } from "@/lib/firestore/helpers";
+import { requireUser, isAuthUser } from "@/lib/request-auth";
 import type { Player, SessionFeed } from "@/lib/types";
 
 export async function POST(
@@ -8,10 +9,8 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   try {
-    const deviceId = req.headers.get("x-device-id");
-    if (!deviceId) {
-      return NextResponse.json({ error: "device_id required" }, { status: 401 });
-    }
+    const auth = await requireUser(req);
+    if (!isAuthUser(auth)) return auth;
 
     const db = getAdminDb();
     const sessionRef = db.collection("sessions").doc(params.id);
@@ -30,13 +29,17 @@ export async function POST(
       return NextResponse.json({ error: "Session has started" }, { status: 400 });
     }
 
-    const playerSnap = await db.collection("players").doc(deviceId).get();
+    const playerSnap = await db.collection("players").doc(auth.uid).get();
     if (!playerSnap.exists) {
       return NextResponse.json({ error: "Player not found" }, { status: 404 });
     }
     const player = docData<Player>(playerSnap)!;
 
-    const participantRef = sessionRef.collection("participants").doc(deviceId);
+    if (player.is_banned) {
+      return NextResponse.json({ error: "Account suspended" }, { status: 403 });
+    }
+
+    const participantRef = sessionRef.collection("participants").doc(auth.uid);
     const existingSnap = await participantRef.get();
 
     if (existingSnap.exists && existingSnap.data()?.status === "going") {
@@ -56,7 +59,7 @@ export async function POST(
     const now = new Date().toISOString();
     await participantRef.set({
       session_id: params.id,
-      player_id: deviceId,
+      player_id: auth.uid,
       status: "going",
       joined_at: now,
       player: {

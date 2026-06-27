@@ -1,17 +1,24 @@
-import { getDeviceId } from "./device";
+import { getIdToken } from "./auth-client";
 import type { Player } from "./types";
 
 export async function apiFetch<T>(
   url: string,
   options?: RequestInit
 ): Promise<T> {
-  const deviceId = getDeviceId();
+  const locale =
+    typeof window !== "undefined"
+      ? localStorage.getItem("sportmate_locale") ?? "ka"
+      : "ka";
+
   const headers: HeadersInit = {
     "Content-Type": "application/json",
+    "Accept-Language": locale,
     ...(options?.headers ?? {}),
   };
-  if (deviceId) {
-    (headers as Record<string, string>)["x-device-id"] = deviceId;
+
+  const token = await getIdToken();
+  if (token) {
+    (headers as Record<string, string>)["Authorization"] = `Bearer ${token}`;
   }
 
   const res = await fetch(url, { ...options, headers });
@@ -28,7 +35,6 @@ export async function createOrUpdatePlayer(body: {
   nickname: string;
   preferred_sports: string[];
   avatar_color: string;
-  device_id?: string;
 }): Promise<Player> {
   return apiFetch<Player>("/api/players", {
     method: "POST",

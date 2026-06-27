@@ -3,8 +3,8 @@
 import Link from "next/link";
 import type { SessionFeed } from "@/lib/types";
 import { SPORT_COLORS, SPORT_EMOJI } from "@/lib/types";
-import { ka } from "@/lib/i18n/ka";
-import { formatGeorgianDateTime, cn } from "@/lib/utils";
+import { useLocale, useT } from "@/lib/hooks/useLocale";
+import { formatDateTime, cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface SessionCardProps {
@@ -13,6 +13,8 @@ interface SessionCardProps {
 }
 
 export function SessionCard({ session, compact }: SessionCardProps) {
+  const t = useT();
+  const { locale } = useLocale();
   const color = SPORT_COLORS[session.sport];
 
   return (
@@ -22,19 +24,19 @@ export function SessionCard({ session, compact }: SessionCardProps) {
         <CardContent className={cn("space-y-2", compact ? "p-3" : "p-4")}>
           <div className="flex items-start justify-between gap-2">
             <div className="font-semibold">
-              {SPORT_EMOJI[session.sport]} {ka.sports[session.sport]}
+              {SPORT_EMOJI[session.sport]} {t.sports[session.sport]}
             </div>
             {session.is_host && (
               <span className="rounded-full bg-muted px-2 py-0.5 text-xs">
-                {ka.myGames.hosted}
+                {t.myGames.hosted}
               </span>
             )}
           </div>
           <div className="text-sm text-muted-foreground">
-            {formatGeorgianDateTime(session.starts_at)}
+            {formatDateTime(session.starts_at, locale)}
           </div>
           <div className="text-sm font-medium">
-            {session.current_players}/{session.max_players} {ka.map.players}
+            {session.current_players}/{session.max_players} {t.map.players}
           </div>
           <div className="text-sm">{session.venue_name}</div>
           {session.district && (

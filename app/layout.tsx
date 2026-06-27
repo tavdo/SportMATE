@@ -1,7 +1,9 @@
 import type { Metadata, Viewport } from "next";
 import { Noto_Sans_Georgian } from "next/font/google";
 import { PlayerProvider } from "@/lib/hooks/usePlayer";
-import { BottomNav } from "@/components/layout/BottomNav";
+import { AuthProvider } from "@/lib/hooks/useAuth";
+import { LocaleProvider } from "@/lib/hooks/useLocale";
+import { ClientShell } from "@/components/layout/ClientShell";
 import "./globals.css";
 
 const notoGeorgian = Noto_Sans_Georgian({
@@ -35,14 +37,15 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ka">
+    <html lang="ka" suppressHydrationWarning>
       <body className={`${notoGeorgian.variable} font-sans antialiased`}>
-        <PlayerProvider>
-          <div className="mx-auto min-h-dvh max-w-lg bg-background">
-            {children}
-            <BottomNav />
-          </div>
-        </PlayerProvider>
+        <LocaleProvider>
+          <AuthProvider>
+            <PlayerProvider>
+              <ClientShell>{children}</ClientShell>
+            </PlayerProvider>
+          </AuthProvider>
+        </LocaleProvider>
       </body>
     </html>
   );

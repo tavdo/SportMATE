@@ -20,6 +20,29 @@ export const ka = {
     submit: "დაწყება",
     nicknameRequired: "ფსევდონიმი სავალდებულოა",
     sportsRequired: "აირჩიე მინიმუმ ერთი სპორტი",
+    phoneTitle: "ტელეფონის რეგისტრაცია",
+    phoneSubtitle: "შეიყვანე ქართული მობილური ნომერი",
+    sendCode: "კოდის მიღება",
+    otpLabel: "SMS კოდი",
+    verify: "დადასტურება",
+    invalidPhone: "არასწორი ნომერი (9 ციფრი, 5-ით იწყება)",
+    otpRequired: "შეიყვანე 6 ციფრიანი კოდი",
+    profileStep: "პროფილის შევსება",
+    changePhone: "სხვა ნომერი",
+    authPhone: "ტელეფონი",
+    authEmail: "ელფოსტა",
+    emailLabel: "ელფოსტა",
+    emailPlaceholder: "you@example.com",
+    passwordLabel: "პაროლი",
+    passwordPlaceholder: "მინ. 6 სიმბოლო",
+    signIn: "შესვლა",
+    signUp: "რეგისტრაცია",
+    switchToSignUp: "ახალი ხარ? დარეგისტრირდი",
+    switchToSignIn: "უკვე გაქვს ანგარიში? შესვლა",
+    invalidEmail: "შეიყვანე სწორი ელფოსტა",
+    passwordRequired: "პაროლი მინიმუმ 6 სიმბოლო",
+    wrongCredentials: "არასწორი ელფოსტა ან პაროლი",
+    emailInUse: "ელფოსტა უკვე დაკავშირებულია — შედი ანგარიშში",
   },
 
   sports: {
@@ -110,6 +133,11 @@ export const ka = {
     gamesPlayed: "ნათამაშები",
     noShows: "გაცდენილი",
     editProfile: "რედაქტირება",
+    language: "ენა",
+    phone: "ტელეფონი",
+    email: "ელფოსტა",
+    logout: "გასვლა",
+    adminPanel: "ადმინ პანელი",
   },
 
   common: {
@@ -128,6 +156,61 @@ export const ka = {
     cancelled: "გაუქმებული",
     done: "დასრულებული",
   },
+
+  admin: {
+    title: "ადმინ პანელი",
+    dashboard: "მთავარი",
+    games: "თამაშები",
+    users: "მომხმარებლები",
+    venues: "მოედნები",
+    settings: "საიტის ინფო",
+    backToApp: "← აპში დაბრუნება",
+    forbidden: "წვდომა აკრძალულია",
+    forbiddenHint: "ადმინის უფლება მხოლოდ ავტორიზებულ ნომრებს აქვთ",
+    cancelGame: "გაუქმება",
+    deleteGame: "წაშლა",
+    ban: "დაბლოკვა",
+    unban: "განბლოკვა",
+    verify: "დადასტურება",
+    unverify: "გაუქმება",
+    addVenue: "მოედნის დამატება",
+    editVenue: "რედაქტირება",
+    deleteVenue: "წაშლა",
+    save: "შენახვა",
+    saved: "შენახულია",
+    appName: "აპის სახელი",
+    tagline: "სლოგანი",
+    contactPhone: "საკონტაქტო ტელეფონი",
+    contactEmail: "ელფოსტა",
+    about: "შესახებ",
+    name: "სახელი",
+    district: "უბანი",
+    sports: "სპორტი",
+    lat: "განედი",
+    lng: "გრძედი",
+    note: "შენიშვნა",
+    indoor: "დახურული",
+    free: "უფასო",
+    host: "ორგანიზატორი",
+    players: "მოთამაშეები",
+    status: "სტატუსი",
+    phone: "ტელეფონი",
+    nickname: "ფსევდონიმი",
+    gamesPlayed: "ნათამაშები",
+    noShows: "გაცდენილი",
+    banned: "დაბლოკილი",
+    verified: "დადასტურებული",
+    actions: "მოქმედება",
+    noData: "მონაცემები არ არის",
+  },
 } as const;
 
-export type KaStrings = typeof ka;
+type DeepString<T> = {
+  [K in keyof T]: T[K] extends string
+    ? string
+    : T[K] extends object
+      ? DeepString<T[K]>
+      : T[K];
+};
+
+export type Messages = DeepString<typeof ka>;

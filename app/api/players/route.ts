@@ -1,25 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAdminDb } from "@/lib/firebase-admin";
 import { docData } from "@/lib/firestore/helpers";
-import { ka } from "@/lib/i18n/ka";
+import { requireUser, isAuthUser } from "@/lib/request-auth";
+import { tFromRequest } from "@/lib/i18n/server";
 import type { Player } from "@/lib/types";
-
-function getDeviceIdFromRequest(req: NextRequest): string | null {
-  return (
-    req.headers.get("x-device-id") ??
-    (req.nextUrl.searchParams.get("device_id") || null)
-  );
-}
 
 export async function POST(req: NextRequest) {
   try {
+    const auth = await requireUser(req);
+    if (!isAuthUser(auth)) return auth;
+
     const body = await req.json();
-    const deviceId = getDeviceIdFromRequest(req) ?? body.device_id;
-
-    if (!deviceId || typeof deviceId !== "string") {
-      return NextResponse.json({ error: "device_id required" }, { status: 400 });
-    }
-
     const { nickname, preferred_sports, avatar_color } = body;
 
     if (!nickname || typeof nickname !== "string" || nickname.trim().length < 2) {
@@ -33,31 +24,38 @@ export async function POST(req: NextRequest) {
     const db = getAdminDb();
     const now = new Date().toISOString();
     const player: Player = {
-      id: deviceId,
+      id: auth.uid,
       nickname: nickname.trim(),
       preferred_sports,
       avatar_color: avatar_color ?? "#22c55e",
       games_played: 0,
       no_shows: 0,
-      is_verified: false,
+      is_verified: true,
+      phone_number: auth.phone || null,
+      email: auth.email || null,
       created_at: now,
+      is_banned: false,
     };
 
-    const existing = await db.collection("players").doc(deviceId).get();
+    const existing = await db.collection("players").doc(auth.uid).get();
     if (existing.exists) {
       const prev = docData<Player>(existing)!;
+      if (prev.is_banned) {
+        return NextResponse.json({ error: "Account suspended" }, { status: 403 });
+      }
       player.games_played = prev.games_played;
       player.no_shows = prev.no_shows;
-      player.is_verified = prev.is_verified;
       player.created_at = prev.created_at;
+      player.phone_number = auth.phone || prev.phone_number;
+      player.email = auth.email || prev.email;
     }
 
-    await db.collection("players").doc(deviceId).set(player);
+    await db.collection("players").doc(auth.uid).set(player);
     return NextResponse.json(player);
   } catch (err) {
     if (err instanceof Error && err.message === "FIREBASE_NOT_CONFIGURED") {
       return NextResponse.json(
-        { error: ka.common.firebaseNotConfigured },
+        { error: tFromRequest(req).common.firebaseNotConfigured },
         { status: 503 }
       );
     }

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getAdminDb } from "@/lib/firebase-admin";
-import { ka } from "@/lib/i18n/ka";
+import { tFromRequest } from "@/lib/i18n/server";
 import { SEED_VENUES } from "@/lib/seed-venues";
 
 export async function POST(req: NextRequest) {
@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     if (err instanceof Error && err.message === "FIREBASE_NOT_CONFIGURED") {
       return NextResponse.json(
-        { error: ka.common.firebaseNotConfigured },
+        { error: tFromRequest(req).common.firebaseNotConfigured },
         { status: 503 }
       );
     }

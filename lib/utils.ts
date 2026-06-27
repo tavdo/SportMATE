@@ -5,25 +5,46 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-export function formatGeorgianDate(date: Date | string): string {
+import type { Locale } from "@/lib/i18n";
+
+function localeTag(locale: Locale): string {
+  return locale === "en" ? "en-GB" : "ka-GE";
+}
+
+export function formatDate(date: Date | string, locale: Locale = "ka"): string {
   const d = typeof date === "string" ? new Date(date) : date;
-  return d.toLocaleDateString("ka-GE", {
+  return d.toLocaleDateString(localeTag(locale), {
     weekday: "short",
     month: "short",
     day: "numeric",
   });
 }
 
-export function formatGeorgianTime(date: Date | string): string {
+export function formatTime(date: Date | string, locale: Locale = "ka"): string {
   const d = typeof date === "string" ? new Date(date) : date;
-  return d.toLocaleTimeString("ka-GE", {
+  return d.toLocaleTimeString(localeTag(locale), {
     hour: "2-digit",
     minute: "2-digit",
   });
 }
 
+export function formatDateTime(date: Date | string, locale: Locale = "ka"): string {
+  return `${formatDate(date, locale)} ${formatTime(date, locale)}`;
+}
+
+/** @deprecated Use formatDate with locale */
+export function formatGeorgianDate(date: Date | string): string {
+  return formatDate(date, "ka");
+}
+
+/** @deprecated Use formatTime with locale */
+export function formatGeorgianTime(date: Date | string): string {
+  return formatTime(date, "ka");
+}
+
+/** @deprecated Use formatDateTime with locale */
 export function formatGeorgianDateTime(date: Date | string): string {
-  return `${formatGeorgianDate(date)} ${formatGeorgianTime(date)}`;
+  return formatDateTime(date, "ka");
 }
 
 export function getDateRange(

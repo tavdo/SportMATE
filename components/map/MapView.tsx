@@ -7,8 +7,8 @@ import MarkerClusterGroup from "react-leaflet-cluster";
 import Link from "next/link";
 import type { SessionFeed, SportType } from "@/lib/types";
 import { SPORT_COLORS, SPORT_EMOJI } from "@/lib/types";
-import { ka } from "@/lib/i18n/ka";
-import { formatGeorgianDateTime } from "@/lib/utils";
+import { useLocale, useT } from "@/lib/hooks/useLocale";
+import { formatDateTime } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import "leaflet/dist/leaflet.css";
 
@@ -49,6 +49,9 @@ interface MapViewProps {
 }
 
 export function MapView({ sessions, loading }: MapViewProps) {
+  const t = useT();
+  const { locale } = useLocale();
+
   const icons = useMemo(
     () => ({
       football: createSportIcon("football"),
@@ -81,17 +84,17 @@ export function MapView({ sessions, loading }: MapViewProps) {
               <Popup>
                 <div className="min-w-[180px] space-y-2 p-1">
                   <div className="font-semibold">
-                    {SPORT_EMOJI[session.sport]} {ka.sports[session.sport]}
+                    {SPORT_EMOJI[session.sport]} {t.sports[session.sport]}
                   </div>
                   <div className="text-sm text-gray-600">
-                    {formatGeorgianDateTime(session.starts_at)}
+                    {formatDateTime(session.starts_at, locale)}
                   </div>
                   <div className="text-sm font-medium">
-                    {session.current_players}/{session.max_players} {ka.map.players}
+                    {session.current_players}/{session.max_players} {t.map.players}
                   </div>
                   <div className="text-sm">{session.venue_name}</div>
                   <Button asChild size="sm" className="w-full">
-                    <Link href={`/session/${session.id}`}>{ka.map.details}</Link>
+                    <Link href={`/session/${session.id}`}>{t.map.details}</Link>
                   </Button>
                 </div>
               </Popup>
@@ -103,7 +106,7 @@ export function MapView({ sessions, loading }: MapViewProps) {
       {loading && (
         <div className="absolute inset-x-0 top-20 z-[1000] flex justify-center">
           <span className="rounded-full bg-background/90 px-4 py-2 text-sm shadow">
-            {ka.map.loading}
+            {t.map.loading}
           </span>
         </div>
       )}

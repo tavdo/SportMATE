@@ -9,8 +9,8 @@ import {
   type ReactNode,
 } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { getOrCreateDeviceId } from "@/lib/device";
 import { apiFetch } from "@/lib/api";
+import { useAuth } from "@/lib/hooks/useAuth";
 import type { Player } from "@/lib/types";
 
 interface PlayerContextValue {
@@ -30,40 +30,54 @@ const PlayerContext = createContext<PlayerContextValue>({
 export function PlayerProvider({ children }: { children: ReactNode }) {
   const [player, setPlayer] = useState<Player | null>(null);
   const [loading, setLoading] = useState(true);
+  const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
   const refresh = useCallback(async () => {
-    const deviceId = getOrCreateDeviceId();
-    if (!deviceId) {
+    if (!user) {
       setPlayer(null);
       setLoading(false);
       return;
     }
 
     try {
-      const data = await apiFetch<Player>(`/api/players/${deviceId}/profile`);
+      const data = await apiFetch<Player>("/api/players/me");
       setPlayer(data);
     } catch {
       setPlayer(null);
     } finally {
       setLoading(false);
     }
-  }, []);
+  }, [user]);
 
   useEffect(() => {
+    if (authLoading) return;
+    setLoading(true);
     refresh();
-  }, [refresh]);
+  }, [authLoading, refresh]);
 
   useEffect(() => {
-    if (loading) return;
-    if (!player && pathname !== "/onboarding") {
+    if (authLoading || loading) return;
+    if (pathname.startsWith("/admin")) return;
+
+    if (!user && pathname !== "/onboarding") {
       router.replace("/onboarding");
+      return;
     }
-  }, [loading, player, pathname, router]);
+
+    if (user && !player && pathname !== "/onboarding") {
+      router.replace("/onboarding");
+      return;
+    }
+
+    if (user && player && pathname === "/onboarding") {
+      router.replace("/");
+    }
+  }, [authLoading, loading, user, player, pathname, router]);
 
   return (
-    <PlayerContext.Provider value={{ player, loading, refresh, setPlayer }}>
+    <PlayerContext.Provider value={{ player, loading: authLoading || loading, refresh, setPlayer }}>
       {children}
     </PlayerContext.Provider>
   );

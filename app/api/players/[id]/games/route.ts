@@ -2,71 +2,83 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAdminDb } from "@/lib/firebase-admin";
 import { docData } from "@/lib/firestore/helpers";
 import { effectiveSessionStatus } from "@/lib/types";
+import { requireUser, isAuthUser } from "@/lib/request-auth";
 import type { Player, SessionFeed } from "@/lib/types";
+
+async function getPlayerGames(uid: string) {
+  const db = getAdminDb();
+  const playerSnap = await db.collection("players").doc(uid).get();
+  const player = docData<Player>(playerSnap);
+
+  if (!player) {
+    return null;
+  }
+
+  const sessionsSnap = await db.collection("sessions").get();
+  const allSessions = sessionsSnap.docs.map((d) => docData<SessionFeed>(d)!);
+
+  const hosted = allSessions.filter((s) => s.host_id === uid);
+
+  const joinedSessionIds = new Set<string>();
+  for (const session of allSessions) {
+    const pt = await db
+      .collection("sessions")
+      .doc(session.id)
+      .collection("participants")
+      .doc(uid)
+      .get();
+    if (pt.exists && pt.data()?.status === "going") {
+      joinedSessionIds.add(session.id);
+    }
+  }
+
+  const joined = allSessions.filter(
+    (s) => joinedSessionIds.has(s.id) && !hosted.some((h) => h.id === s.id)
+  );
+
+  const all = [...hosted, ...joined].map((s) => ({
+    ...s,
+    effective_status: effectiveSessionStatus(s),
+    is_host: s.host_id === uid,
+  }));
+
+  const unique = Array.from(new Map(all.map((s) => [s.id, s])).values());
+  const now = new Date();
+
+  const upcoming = unique.filter(
+    (s) =>
+      s.effective_status !== "cancelled" &&
+      s.effective_status !== "done" &&
+      new Date(s.starts_at) >= now
+  );
+  const past = unique.filter(
+    (s) =>
+      s.effective_status === "done" ||
+      s.effective_status === "cancelled" ||
+      new Date(s.starts_at) < now
+  );
+
+  return { player, upcoming, past };
+}
 
 export async function GET(
   req: NextRequest,
   { params }: { params: { id: string } }
 ) {
   try {
-    const deviceId = req.headers.get("x-device-id");
-    if (!deviceId) {
-      return NextResponse.json({ error: "device_id required" }, { status: 401 });
+    const auth = await requireUser(req);
+    if (!isAuthUser(auth)) return auth;
+
+    if (auth.uid !== params.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
-    const db = getAdminDb();
-    const playerSnap = await db.collection("players").doc(params.id).get();
-    const player = docData<Player>(playerSnap);
-
-    if (!player) {
+    const result = await getPlayerGames(auth.uid);
+    if (!result) {
       return NextResponse.json({ error: "Player not found" }, { status: 404 });
     }
 
-    const sessionsSnap = await db.collection("sessions").get();
-    const allSessions = sessionsSnap.docs.map((d) => docData<SessionFeed>(d)!);
-
-    const hosted = allSessions.filter((s) => s.host_id === params.id);
-
-    const joinedSessionIds = new Set<string>();
-    for (const session of allSessions) {
-      const pt = await db
-        .collection("sessions")
-        .doc(session.id)
-        .collection("participants")
-        .doc(params.id)
-        .get();
-      if (pt.exists && pt.data()?.status === "going") {
-        joinedSessionIds.add(session.id);
-      }
-    }
-
-    const joined = allSessions.filter(
-      (s) => joinedSessionIds.has(s.id) && !hosted.some((h) => h.id === s.id)
-    );
-
-    const all = [...hosted, ...joined].map((s) => ({
-      ...s,
-      effective_status: effectiveSessionStatus(s),
-      is_host: s.host_id === params.id,
-    }));
-
-    const unique = Array.from(new Map(all.map((s) => [s.id, s])).values());
-    const now = new Date();
-
-    const upcoming = unique.filter(
-      (s) =>
-        s.effective_status !== "cancelled" &&
-        s.effective_status !== "done" &&
-        new Date(s.starts_at) >= now
-    );
-    const past = unique.filter(
-      (s) =>
-        s.effective_status === "done" ||
-        s.effective_status === "cancelled" ||
-        new Date(s.starts_at) < now
-    );
-
-    return NextResponse.json({ player, upcoming, past });
+    return NextResponse.json(result);
   } catch (err) {
     const message = err instanceof Error ? err.message : "Internal error";
     return NextResponse.json({ error: message }, { status: 500 });
@@ -78,9 +90,11 @@ export async function POST(
   { params }: { params: { id: string } }
 ) {
   try {
-    const deviceId = req.headers.get("x-device-id");
-    if (!deviceId) {
-      return NextResponse.json({ error: "device_id required" }, { status: 401 });
+    const auth = await requireUser(req);
+    if (!isAuthUser(auth)) return auth;
+
+    if (auth.uid !== params.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
 
     const body = await req.json();
@@ -94,7 +108,7 @@ export async function POST(
     const sessionRef = db.collection("sessions").doc(session_id);
     const session = docData<SessionFeed>(await sessionRef.get());
 
-    if (!session || session.host_id !== deviceId) {
+    if (!session || session.host_id !== auth.uid) {
       return NextResponse.json({ error: "Only host can mark no-shows" }, { status: 403 });
     }
 
@@ -107,7 +121,7 @@ export async function POST(
     }
 
     for (const playerId of player_ids) {
-      if (playerId === deviceId) continue;
+      if (playerId === auth.uid) continue;
       const pRef = db.collection("players").doc(playerId);
       const pSnap = await pRef.get();
       if (pSnap.exists) {

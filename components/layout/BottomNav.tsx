@@ -3,19 +3,20 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Map, CalendarDays, User } from "lucide-react";
-import { ka } from "@/lib/i18n/ka";
+import { useT } from "@/lib/hooks/useLocale";
 import { cn } from "@/lib/utils";
-
-const tabs = [
-  { href: "/", label: ka.nav.map, icon: Map },
-  { href: "/my-games", label: ka.nav.myGames, icon: CalendarDays },
-  { href: "/profile", label: ka.nav.profile, icon: User },
-];
 
 export function BottomNav() {
   const pathname = usePathname();
+  const t = useT();
 
-  if (pathname === "/onboarding" || pathname.startsWith("/create") || pathname.startsWith("/session/")) {
+  const tabs = [
+    { href: "/", label: t.nav.map, icon: Map },
+    { href: "/my-games", label: t.nav.myGames, icon: CalendarDays },
+    { href: "/profile", label: t.nav.profile, icon: User },
+  ];
+
+  if (pathname === "/onboarding" || pathname.startsWith("/create") || pathname.startsWith("/session/") || pathname.startsWith("/admin")) {
     return null;
   }
 

@@ -2,9 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { SessionFeed, Player } from "@/lib/types";
-import { ka } from "@/lib/i18n/ka";
+import { useT } from "@/lib/hooks/useLocale";
 import { apiFetch } from "@/lib/api";
-import { getDeviceId } from "@/lib/device";
 import { usePlayer } from "@/lib/hooks/usePlayer";
 import { SessionCard } from "@/components/session/SessionCard";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -17,18 +16,14 @@ interface GamesResponse {
 
 export default function MyGamesPage() {
   const { player, loading: playerLoading } = usePlayer();
+  const t = useT();
   const [data, setData] = useState<GamesResponse | null>(null);
   const [loading, setLoading] = useState(true);
 
   const fetchGames = useCallback(async () => {
-    const deviceId = getDeviceId();
-    if (!deviceId) return;
-
     setLoading(true);
     try {
-      const result = await apiFetch<GamesResponse>(
-        `/api/players/${deviceId}/games`
-      );
+      const result = await apiFetch<GamesResponse>("/api/players/me/games");
       setData(result);
     } catch {
       setData(null);
@@ -46,7 +41,7 @@ export default function MyGamesPage() {
   if (playerLoading || loading) {
     return (
       <div className="flex min-h-dvh items-center justify-center pb-safe">
-        {ka.common.loading}
+        {t.common.loading}
       </div>
     );
   }
@@ -56,11 +51,11 @@ export default function MyGamesPage() {
   return (
     <div className="min-h-dvh pb-safe">
       <header className="border-b px-4 py-4">
-        <h1 className="text-xl font-bold">{ka.myGames.title}</h1>
+        <h1 className="text-xl font-bold">{t.myGames.title}</h1>
         {reliability && (
           <p className="mt-1 text-sm text-muted-foreground">
-            {ka.myGames.reliability}: {reliability.games_played} ·{" "}
-            {ka.myGames.noShows}: {reliability.no_shows}
+            {t.myGames.reliability}: {reliability.games_played} ·{" "}
+            {t.myGames.noShows}: {reliability.no_shows}
           </p>
         )}
       </header>
@@ -69,10 +64,10 @@ export default function MyGamesPage() {
         <Tabs defaultValue="upcoming">
           <TabsList className="w-full">
             <TabsTrigger value="upcoming" className="flex-1">
-              {ka.myGames.upcoming}
+              {t.myGames.upcoming}
             </TabsTrigger>
             <TabsTrigger value="past" className="flex-1">
-              {ka.myGames.past}
+              {t.myGames.past}
             </TabsTrigger>
           </TabsList>
 
@@ -89,7 +84,7 @@ export default function MyGamesPage() {
           <TabsContent value="past" className="mt-4 space-y-3">
             {data?.past.length === 0 ? (
               <p className="text-center text-sm text-muted-foreground py-8">
-                {ka.myGames.empty}
+                {t.myGames.empty}
               </p>
             ) : (
               data?.past.map((s) => (
@@ -104,10 +99,11 @@ export default function MyGamesPage() {
 }
 
 function EmptyState() {
+  const t = useT();
   return (
     <div className="py-12 text-center">
-      <p className="font-medium">{ka.myGames.empty}</p>
-      <p className="mt-1 text-sm text-muted-foreground">{ka.myGames.emptyHint}</p>
+      <p className="font-medium">{t.myGames.empty}</p>
+      <p className="mt-1 text-sm text-muted-foreground">{t.myGames.emptyHint}</p>
     </div>
   );
 }

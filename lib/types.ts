@@ -11,8 +11,29 @@ export interface Player {
   games_played: number;
   no_shows: number;
   is_verified: boolean;
+  phone_number: string | null;
+  email: string | null;
   created_at: string;
+  is_banned?: boolean;
 }
+
+export interface SiteSettings {
+  app_name: string;
+  tagline: string;
+  contact_phone: string | null;
+  contact_email: string | null;
+  about: string | null;
+  updated_at: string;
+}
+
+export const DEFAULT_SITE_SETTINGS: SiteSettings = {
+  app_name: "SportMate Batumi",
+  tagline: "Find pickup games in Batumi",
+  contact_phone: null,
+  contact_email: null,
+  about: null,
+  updated_at: new Date().toISOString(),
+};
 
 export interface Venue {
   id: string;

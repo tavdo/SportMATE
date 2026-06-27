@@ -4,10 +4,9 @@ import { useState } from "react";
 import dynamic from "next/dynamic";
 import type { Venue, SportType } from "@/lib/types";
 import { SPORT_EMOJI } from "@/lib/types";
-import { ka } from "@/lib/i18n/ka";
+import { useT } from "@/lib/hooks/useLocale";
 import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 const VenueMap = dynamic(() => import("./VenueMap").then((m) => m.VenueMap), {
@@ -28,6 +27,7 @@ export function VenuePicker({
   selectedVenueId,
   onSelect,
 }: VenuePickerProps) {
+  const t = useT();
   const [view, setView] = useState<"list" | "map">("list");
 
   const filtered = selectedSport
@@ -39,10 +39,10 @@ export function VenuePicker({
       <Tabs value={view} onValueChange={(v) => setView(v as "list" | "map")}>
         <TabsList className="w-full">
           <TabsTrigger value="list" className="flex-1">
-            {ka.create.listView}
+            {t.create.listView}
           </TabsTrigger>
           <TabsTrigger value="map" className="flex-1">
-            {ka.create.mapView}
+            {t.create.mapView}
           </TabsTrigger>
         </TabsList>
       </Tabs>

@@ -2,7 +2,7 @@
 
 import type { SportType, SkillLevel } from "@/lib/types";
 import { SPORT_EMOJI } from "@/lib/types";
-import { ka } from "@/lib/i18n/ka";
+import { useT } from "@/lib/hooks/useLocale";
 import { cn } from "@/lib/utils";
 
 interface FilterBarProps {
@@ -15,11 +15,6 @@ interface FilterBarProps {
 }
 
 const sports: (SportType | null)[] = [null, "football", "basketball", "volleyball"];
-const dateLabels: Record<"today" | "tomorrow" | "week", string> = {
-  today: ka.map.today,
-  tomorrow: ka.map.tomorrow,
-  week: ka.map.thisWeek,
-};
 const skills: (SkillLevel | null)[] = [null, "beginner", "intermediate", "advanced"];
 
 export function FilterBar({
@@ -30,6 +25,14 @@ export function FilterBar({
   onDateChange,
   onSkillChange,
 }: FilterBarProps) {
+  const t = useT();
+
+  const dateLabels: Record<"today" | "tomorrow" | "week", string> = {
+    today: t.map.today,
+    tomorrow: t.map.tomorrow,
+    week: t.map.thisWeek,
+  };
+
   return (
     <div className="space-y-2 rounded-2xl bg-background/95 p-3 shadow-lg backdrop-blur">
       <div className="flex gap-2 overflow-x-auto pb-1">
@@ -44,7 +47,7 @@ export function FilterBar({
                 : "bg-muted text-muted-foreground"
             )}
           >
-            {s ? SPORT_EMOJI[s] : ka.map.allSports}
+            {s ? SPORT_EMOJI[s] : t.map.allSports}
           </button>
         ))}
       </div>
@@ -76,7 +79,7 @@ export function FilterBar({
                 : "text-muted-foreground"
             )}
           >
-            {sk ? ka.skill[sk] : ka.skill.any}
+            {sk ? t.skill[sk] : t.skill.any}
           </button>
         ))}
       </div>

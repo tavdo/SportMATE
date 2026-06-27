@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import type { Venue, SportType, SkillLevel } from "@/lib/types";
 import { SPORT_EMOJI } from "@/lib/types";
-import { ka } from "@/lib/i18n/ka";
+import { useT } from "@/lib/hooks/useLocale";
 import { apiFetch } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -21,10 +21,10 @@ import {
 import { VenuePicker } from "@/components/create/VenuePicker";
 import { TimePicker } from "@/components/create/TimePicker";
 
-const steps = [ka.create.stepVenue, ka.create.stepSport, ka.create.stepTime, ka.create.stepDetails];
-
 export default function CreatePage() {
   const router = useRouter();
+  const t = useT();
+  const steps = [t.create.stepVenue, t.create.stepSport, t.create.stepTime, t.create.stepDetails];
   const [step, setStep] = useState(0);
   const [venues, setVenues] = useState<Venue[]>([]);
   const [venue, setVenue] = useState<Venue | null>(null);
@@ -74,7 +74,7 @@ export default function CreatePage() {
       });
       router.push(`/session/${session.id}`);
     } catch (e) {
-      setError(e instanceof Error ? e.message : ka.common.error);
+      setError(e instanceof Error ? e.message : t.common.error);
     } finally {
       setLoading(false);
     }
@@ -89,7 +89,7 @@ export default function CreatePage() {
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <div>
-          <h1 className="text-lg font-semibold">{ka.create.title}</h1>
+          <h1 className="text-lg font-semibold">{t.create.title}</h1>
           <p className="text-xs text-muted-foreground">
             {step + 1}/{steps.length} — {steps[step]}
           </p>
@@ -132,7 +132,7 @@ export default function CreatePage() {
                 )}
               >
                 <span className="text-3xl">{SPORT_EMOJI[s]}</span>
-                <span className="font-medium">{ka.sports[s]}</span>
+                <span className="font-medium">{t.sports[s]}</span>
               </button>
             ))}
           </div>
@@ -150,7 +150,7 @@ export default function CreatePage() {
         {step === 3 && (
           <div className="space-y-4">
             <div className="space-y-2">
-              <Label>{ka.create.maxPlayers}</Label>
+              <Label>{t.create.maxPlayers}</Label>
               <Input
                 type="number"
                 min={2}
@@ -160,7 +160,7 @@ export default function CreatePage() {
               />
             </div>
             <div className="space-y-2">
-              <Label>{ka.create.skill}</Label>
+              <Label>{t.create.skill}</Label>
               <Select value={skill} onValueChange={(v) => setSkill(v as SkillLevel)}>
                 <SelectTrigger>
                   <SelectValue />
@@ -169,7 +169,7 @@ export default function CreatePage() {
                   {(["any", "beginner", "intermediate", "advanced"] as SkillLevel[]).map(
                     (s) => (
                       <SelectItem key={s} value={s}>
-                        {ka.skill[s]}
+                        {t.skill[s]}
                       </SelectItem>
                     )
                   )}
@@ -177,9 +177,9 @@ export default function CreatePage() {
               </Select>
             </div>
             <div className="space-y-2">
-              <Label>{ka.create.note}</Label>
+              <Label>{t.create.note}</Label>
               <Input
-                placeholder={ka.create.notePlaceholder}
+                placeholder={t.create.notePlaceholder}
                 value={note}
                 onChange={(e) => setNote(e.target.value)}
               />
@@ -201,7 +201,7 @@ export default function CreatePage() {
                 (step === 2 && (!date || !time))
               }
             >
-              {ka.create.next}
+              {t.create.next}
             </Button>
           ) : (
             <Button
@@ -210,7 +210,7 @@ export default function CreatePage() {
               onClick={handleSubmit}
               disabled={loading}
             >
-              {loading ? ka.common.loading : ka.create.submit}
+              {loading ? t.common.loading : t.create.submit}
             </Button>
           )}
         </div>

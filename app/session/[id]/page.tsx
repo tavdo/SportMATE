@@ -7,12 +7,12 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import type { SessionDetail, ParticipantWithPlayer } from "@/lib/types";
 import { SPORT_COLORS, SPORT_EMOJI } from "@/lib/types";
-import { ka } from "@/lib/i18n/ka";
+import { useLocale, useT } from "@/lib/hooks/useLocale";
+import { useAuth } from "@/lib/hooks/useAuth";
 import { apiFetch } from "@/lib/api";
-import { getDeviceId } from "@/lib/device";
 import { getFirestoreDb } from "@/lib/firebase-client";
 import { collection, onSnapshot } from "firebase/firestore";
-import { formatGeorgianDateTime } from "@/lib/utils";
+import { formatDateTime } from "@/lib/utils";
 import { PlayerList } from "@/components/session/PlayerList";
 import { JoinButton } from "@/components/session/JoinButton";
 import { Button } from "@/components/ui/button";
@@ -26,13 +26,16 @@ const MiniMap = dynamic(
 export default function SessionPage() {
   const params = useParams();
   const router = useRouter();
+  const t = useT();
+  const { locale } = useLocale();
+  const { user } = useAuth();
   const [session, setSession] = useState<SessionDetail | null>(null);
   const [loading, setLoading] = useState(true);
   const [selectedNoShows, setSelectedNoShows] = useState<string[]>([]);
   const [markingNoShow, setMarkingNoShow] = useState(false);
 
   const sessionId = params.id as string;
-  const deviceId = getDeviceId();
+  const uid = user?.uid ?? null;
 
   const fetchSession = useCallback(async () => {
     try {
@@ -63,7 +66,7 @@ export default function SessionPage() {
   if (loading) {
     return (
       <div className="flex min-h-dvh items-center justify-center">
-        {ka.common.loading}
+        {t.common.loading}
       </div>
     );
   }
@@ -71,16 +74,16 @@ export default function SessionPage() {
   if (!session) {
     return (
       <div className="flex min-h-dvh flex-col items-center justify-center gap-4 p-6">
-        <p>{ka.common.error}</p>
-        <Button onClick={() => router.push("/")}>{ka.common.back}</Button>
+        <p>{t.common.error}</p>
+        <Button onClick={() => router.push("/")}>{t.common.back}</Button>
       </div>
     );
   }
 
-  const isJoined = session.participants.some(
-    (p) => p.player_id === deviceId && p.status === "going"
-  );
-  const isHost = session.host_id === deviceId;
+  const isJoined = uid
+    ? session.participants.some((p) => p.player_id === uid && p.status === "going")
+    : false;
+  const isHost = uid ? session.host_id === uid : false;
   const isPast = new Date(session.starts_at) < new Date();
 
   const participants = session.participants.filter(
@@ -88,10 +91,10 @@ export default function SessionPage() {
   ) as ParticipantWithPlayer[];
 
   async function handleMarkNoShows() {
-    if (!deviceId || selectedNoShows.length === 0) return;
+    if (!uid || selectedNoShows.length === 0) return;
     setMarkingNoShow(true);
     try {
-      await apiFetch(`/api/players/${deviceId}/games`, {
+      await apiFetch(`/api/players/me/games`, {
         method: "POST",
         body: JSON.stringify({
           session_id: sessionId,
@@ -124,7 +127,7 @@ export default function SessionPage() {
           </Link>
         </Button>
         <h1 className="text-lg font-semibold">
-          {SPORT_EMOJI[session.sport]} {ka.sports[session.sport]}
+          {SPORT_EMOJI[session.sport]} {t.sports[session.sport]}
         </h1>
       </header>
 
@@ -137,7 +140,7 @@ export default function SessionPage() {
         <Card>
           <CardContent className="space-y-3 p-4">
             <div>
-              <div className="text-sm text-muted-foreground">{ka.session.venue}</div>
+              <div className="text-sm text-muted-foreground">{t.session.venue}</div>
               <div className="font-semibold">{session.venue_name}</div>
               {session.venue?.note && (
                 <p className="mt-1 text-sm text-muted-foreground">
@@ -151,19 +154,19 @@ export default function SessionPage() {
             )}
 
             <div>
-              <div className="text-sm text-muted-foreground">{ka.session.dateTime}</div>
+              <div className="text-sm text-muted-foreground">{t.session.dateTime}</div>
               <div className="font-medium">
-                {formatGeorgianDateTime(session.starts_at)}
+                {formatDateTime(session.starts_at, locale)}
               </div>
             </div>
 
             <div className="flex gap-4">
               <div>
-                <div className="text-sm text-muted-foreground">{ka.create.skill}</div>
-                <div>{ka.skill[session.skill]}</div>
+                <div className="text-sm text-muted-foreground">{t.create.skill}</div>
+                <div>{t.skill[session.skill]}</div>
               </div>
               <div>
-                <div className="text-sm text-muted-foreground">{ka.map.players}</div>
+                <div className="text-sm text-muted-foreground">{t.map.players}</div>
                 <div className="text-lg font-bold">
                   {session.current_players}/{session.max_players}
                 </div>
@@ -171,13 +174,13 @@ export default function SessionPage() {
             </div>
 
             <div>
-              <div className="text-sm text-muted-foreground">{ka.session.host}</div>
+              <div className="text-sm text-muted-foreground">{t.session.host}</div>
               <div>{session.host_nickname}</div>
             </div>
 
             {session.note && (
               <div>
-                <div className="text-sm text-muted-foreground">{ka.session.note}</div>
+                <div className="text-sm text-muted-foreground">{t.session.note}</div>
                 <p>{session.note}</p>
               </div>
             )}
@@ -185,7 +188,7 @@ export default function SessionPage() {
         </Card>
 
         <div>
-          <h2 className="mb-3 font-semibold">{ka.session.players}</h2>
+          <h2 className="mb-3 font-semibold">{t.session.players}</h2>
           <PlayerList
             participants={participants}
             hostId={session.host_id}
@@ -202,7 +205,7 @@ export default function SessionPage() {
             onClick={handleMarkNoShows}
             disabled={markingNoShow || selectedNoShows.length === 0}
           >
-            {ka.session.markNoShow}
+            {t.session.markNoShow}
           </Button>
         )}
 

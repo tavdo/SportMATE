@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ka } from "@/lib/i18n/ka";
+import { useT } from "@/lib/hooks/useLocale";
 import { apiFetch } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import type { SessionDetail } from "@/lib/types";
@@ -19,6 +19,7 @@ export function JoinButton({
   isHost,
   onUpdate,
 }: JoinButtonProps) {
+  const t = useT();
   const [loading, setLoading] = useState(false);
   const isFull = session.current_players >= session.max_players;
   const isPast = new Date(session.starts_at) < new Date();
@@ -49,7 +50,7 @@ export function JoinButton({
   }
 
   async function handleCancel() {
-    if (!confirm(ka.session.cancel + "?")) return;
+    if (!confirm(t.session.cancel + "?")) return;
     setLoading(true);
     try {
       await apiFetch(`/api/sessions/${session.id}/cancel`, { method: "POST" });
@@ -64,7 +65,7 @@ export function JoinButton({
   if (isCancelled) {
     return (
       <Button disabled className="w-full" variant="secondary">
-        {ka.session.cancelled}
+        {t.session.cancelled}
       </Button>
     );
   }
@@ -72,7 +73,7 @@ export function JoinButton({
   if (isPast) {
     return (
       <Button disabled className="w-full" variant="secondary">
-        {ka.session.done}
+        {t.session.done}
       </Button>
     );
   }
@@ -85,7 +86,7 @@ export function JoinButton({
         onClick={handleCancel}
         disabled={loading}
       >
-        {ka.session.cancel}
+        {t.session.cancel}
       </Button>
     );
   }
@@ -98,7 +99,7 @@ export function JoinButton({
         onClick={handleLeave}
         disabled={loading}
       >
-        {ka.session.leave}
+        {t.session.leave}
       </Button>
     );
   }
@@ -106,14 +107,14 @@ export function JoinButton({
   if (isFull) {
     return (
       <Button disabled className="w-full" variant="secondary">
-        {ka.session.full}
+        {t.session.full}
       </Button>
     );
   }
 
   return (
     <Button className="w-full" size="lg" onClick={handleJoin} disabled={loading}>
-      {ka.session.join}
+      {t.session.join}
     </Button>
   );
 }

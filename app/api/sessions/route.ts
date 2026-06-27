@@ -3,7 +3,8 @@ import { getAdminDb } from "@/lib/firebase-admin";
 import { docData, filterSessionFeed } from "@/lib/firestore/helpers";
 import { effectiveSessionStatus } from "@/lib/types";
 import type { Player, SessionFeed, Venue } from "@/lib/types";
-import { ka } from "@/lib/i18n/ka";
+import { requireUser, isAuthUser } from "@/lib/request-auth";
+import { tFromRequest } from "@/lib/i18n/server";
 
 export async function GET(req: NextRequest) {
   try {
@@ -31,10 +32,8 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
-    const deviceId = req.headers.get("x-device-id");
-    if (!deviceId) {
-      return NextResponse.json({ error: "device_id required" }, { status: 401 });
-    }
+    const auth = await requireUser(req);
+    if (!isAuthUser(auth)) return auth;
 
     const body = await req.json();
     const { venue_id, sport, starts_at, max_players, skill, note } = body;
@@ -52,11 +51,15 @@ export async function POST(req: NextRequest) {
     }
 
     const db = getAdminDb();
-    const playerSnap = await db.collection("players").doc(deviceId).get();
+    const playerSnap = await db.collection("players").doc(auth.uid).get();
     if (!playerSnap.exists) {
       return NextResponse.json({ error: "Player not found" }, { status: 404 });
     }
     const host = docData<Player>(playerSnap)!;
+
+    if (host.is_banned) {
+      return NextResponse.json({ error: "Account suspended" }, { status: 403 });
+    }
 
     const venueSnap = await db.collection("venues").doc(venue_id).get();
     if (!venueSnap.exists) {
@@ -70,7 +73,7 @@ export async function POST(req: NextRequest) {
       id: sessionRef.id,
       venue_id,
       sport,
-      host_id: deviceId,
+      host_id: auth.uid,
       starts_at,
       max_players,
       skill: skill ?? "any",
@@ -88,9 +91,9 @@ export async function POST(req: NextRequest) {
 
     const batch = db.batch();
     batch.set(sessionRef, session);
-    batch.set(sessionRef.collection("participants").doc(deviceId), {
+    batch.set(sessionRef.collection("participants").doc(auth.uid), {
       session_id: sessionRef.id,
-      player_id: deviceId,
+      player_id: auth.uid,
       status: "going",
       joined_at: now,
       player: {
@@ -108,7 +111,7 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     if (err instanceof Error && err.message === "FIREBASE_NOT_CONFIGURED") {
       return NextResponse.json(
-        { error: ka.common.firebaseNotConfigured },
+        { error: tFromRequest(req).common.firebaseNotConfigured },
         { status: 503 }
       );
     }
