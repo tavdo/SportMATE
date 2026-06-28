@@ -84,15 +84,17 @@ export default function CreatePage() {
 
   const availableSports = venue?.sports ?? [];
 
-  const startsAt =
-    date && time ? new Date(`${date}T${time}:00`) : null;
+  const startsAtIso = date && time ? `${date}T${time}:00` : null;
   const showWeather =
-    !!venue && !venue.is_indoor && !!startsAt && !Number.isNaN(startsAt.getTime());
+    !!venue &&
+    !venue.is_indoor &&
+    !!startsAtIso &&
+    !Number.isNaN(new Date(startsAtIso).getTime());
 
   const { weather, loading: weatherLoading } = useGameWeather({
     lat: venue?.lat,
     lng: venue?.lng,
-    at: startsAt,
+    at: startsAtIso,
     enabled: showWeather && (step === 2 || step === 3),
   });
 

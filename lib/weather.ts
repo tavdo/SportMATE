@@ -52,14 +52,15 @@ function formatDateInTz(date: Date, timeZone: string): string {
   }).format(date);
 }
 
-function formatHourInTz(date: Date, timeZone: string): string {
-  const parts = new Intl.DateTimeFormat("en-GB", {
-    timeZone,
-    hour: "2-digit",
-    hour12: false,
-  }).formatToParts(date);
-  const hour = parts.find((p) => p.type === "hour")?.value ?? "00";
-  return hour.padStart(2, "0");
+function formatHourInTz(date: Date, timeZone: string): number {
+  const hour = Number(
+    new Intl.DateTimeFormat("en-GB", {
+      timeZone,
+      hour: "numeric",
+      hour12: false,
+    }).format(date)
+  );
+  return hour === 24 ? 0 : hour;
 }
 
 export async function fetchGameWeather(
@@ -73,8 +74,7 @@ export async function fetchGameWeather(
 
   const timeZone = "Asia/Tbilisi";
   const dateStr = formatDateInTz(at, timeZone);
-  const hourStr = formatHourInTz(at, timeZone);
-  const targetKey = `${dateStr}T${hourStr}:00`;
+  const hour = formatHourInTz(at, timeZone);
 
   const url = new URL("https://api.open-meteo.com/v1/forecast");
   url.searchParams.set("latitude", String(lat));
@@ -88,7 +88,11 @@ export async function fetchGameWeather(
   if (!res.ok) return null;
 
   const data = (await res.json()) as OpenMeteoResponse;
-  const idx = data.hourly.time.findIndex((t) => t.startsWith(targetKey.slice(0, 13)));
+  const idx = data.hourly.time.findIndex((t) => {
+    const entryDate = t.slice(0, 10);
+    const entryHour = Number(t.slice(11, 13));
+    return entryDate === dateStr && entryHour === hour;
+  });
   if (idx === -1) return null;
 
   const temperature = data.hourly.temperature_2m[idx];
