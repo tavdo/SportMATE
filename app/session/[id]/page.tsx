@@ -15,6 +15,8 @@ import { collection, onSnapshot } from "firebase/firestore";
 import { formatDateTime } from "@/lib/utils";
 import { PlayerList } from "@/components/session/PlayerList";
 import { JoinButton } from "@/components/session/JoinButton";
+import { GameWeatherCard } from "@/components/weather/GameWeather";
+import { useGameWeather } from "@/lib/hooks/useGameWeather";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -63,6 +65,20 @@ export default function SessionPage() {
     return () => unsub();
   }, [sessionId, fetchSession]);
 
+  const isPast = session ? new Date(session.starts_at) < new Date() : false;
+  const showWeather =
+    !!session?.venue &&
+    !session.venue.is_indoor &&
+    !isPast &&
+    session.status !== "cancelled";
+
+  const { weather, loading: weatherLoading } = useGameWeather({
+    lat: session?.venue?.lat,
+    lng: session?.venue?.lng,
+    at: session?.starts_at,
+    enabled: showWeather,
+  });
+
   if (loading) {
     return (
       <div className="flex min-h-dvh items-center justify-center">
@@ -84,7 +100,6 @@ export default function SessionPage() {
     ? session.participants.some((p) => p.player_id === uid && p.status === "going")
     : false;
   const isHost = uid ? session.host_id === uid : false;
-  const isPast = new Date(session.starts_at) < new Date();
 
   const participants = session.participants.filter(
     (p) => p.status === "going"
@@ -159,6 +174,10 @@ export default function SessionPage() {
                 {formatDateTime(session.starts_at, locale)}
               </div>
             </div>
+
+            {showWeather && (
+              <GameWeatherCard weather={weather} loading={weatherLoading} />
+            )}
 
             <div className="flex gap-4">
               <div>

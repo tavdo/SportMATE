@@ -109,6 +109,26 @@ export const en = {
     mapView: "Map",
   },
 
+  weather: {
+    forecast: "Weather forecast",
+    atGameTime: "at game time",
+    temperature: "{{temp}}°C",
+    rainChance: "{{percent}}% chance of rain",
+    rainLikely: "High chance of rain",
+    rainWarning:
+      "{{percent}}% chance of rain at this time. You may want to reconsider an outdoor game.",
+    disclaimer: "Forecast may change",
+    conditions: {
+      clear: "Clear",
+      cloudy: "Cloudy",
+      fog: "Fog",
+      drizzle: "Drizzle",
+      rain: "Rain",
+      thunder: "Thunderstorm",
+      snow: "Snow",
+    },
+  },
+
   myGames: {
     title: "My games",
     upcoming: "Upcoming",

@@ -107,6 +107,26 @@ export const ru = {
     mapView: "Карта",
   },
 
+  weather: {
+    forecast: "Прогноз погоды",
+    atGameTime: "во время игры",
+    temperature: "{{temp}}°C",
+    rainChance: "Вероятность дождя {{percent}}%",
+    rainLikely: "Высокая вероятность дождя",
+    rainWarning:
+      "Вероятность дождя {{percent}}% в это время. Возможно, стоит пересмотреть игру на открытой площадке.",
+    disclaimer: "Прогноз может измениться",
+    conditions: {
+      clear: "Ясно",
+      cloudy: "Облачно",
+      fog: "Туман",
+      drizzle: "Морось",
+      rain: "Дождь",
+      thunder: "Гроза",
+      snow: "Снег",
+    },
+  },
+
   myGames: {
     title: "Мои игры",
     upcoming: "Предстоящие",

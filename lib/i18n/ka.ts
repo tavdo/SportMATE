@@ -106,6 +106,26 @@ export const ka = {
     mapView: "რუკა",
   },
 
+  weather: {
+    forecast: "ამინდის პროგნოზი",
+    atGameTime: "თამაშის დროს",
+    temperature: "{{temp}}°C",
+    rainChance: "წვიმის შანსი {{percent}}%",
+    rainLikely: "წვიმის შანსი მაღალია",
+    rainWarning:
+      "ამ დროს წვიმის შანსი {{percent}}%-ია. გარე მოედანზე თამაში შეიძლება გადაიფიქრო.",
+    disclaimer: "პროგნოზი შეიძლება შეიცვალოს",
+    conditions: {
+      clear: "მზიანი",
+      cloudy: "ღრუბლიანი",
+      fog: "ნისლი",
+      drizzle: "ჟღერბი",
+      rain: "წვიმა",
+      thunder: "ქარიშხალი",
+      snow: "თოვლი",
+    },
+  },
+
   myGames: {
     title: "ჩემი თამაშები",
     upcoming: "მომავალი",

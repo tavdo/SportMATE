@@ -20,6 +20,8 @@ import {
 } from "@/components/ui/select";
 import { VenuePicker } from "@/components/create/VenuePicker";
 import { TimePicker } from "@/components/create/TimePicker";
+import { GameWeatherCard, WeatherRainAlert } from "@/components/weather/GameWeather";
+import { useGameWeather } from "@/lib/hooks/useGameWeather";
 
 export default function CreatePage() {
   const router = useRouter();
@@ -82,6 +84,18 @@ export default function CreatePage() {
 
   const availableSports = venue?.sports ?? [];
 
+  const startsAt =
+    date && time ? new Date(`${date}T${time}:00`) : null;
+  const showWeather =
+    !!venue && !venue.is_indoor && !!startsAt && !Number.isNaN(startsAt.getTime());
+
+  const { weather, loading: weatherLoading } = useGameWeather({
+    lat: venue?.lat,
+    lng: venue?.lng,
+    at: startsAt,
+    enabled: showWeather && (step === 2 || step === 3),
+  });
+
   return (
     <div className="min-h-dvh pb-8">
       <header className="sticky top-0 z-10 flex items-center gap-3 border-b bg-background px-4 py-3">
@@ -139,16 +153,27 @@ export default function CreatePage() {
         )}
 
         {step === 2 && (
-          <TimePicker
-            date={date}
-            time={time}
-            onDateChange={setDate}
-            onTimeChange={setTime}
-          />
+          <div className="space-y-4">
+            <TimePicker
+              date={date}
+              time={time}
+              onDateChange={setDate}
+              onTimeChange={setTime}
+            />
+            {showWeather && (
+              <>
+                <WeatherRainAlert weather={weather} loading={weatherLoading} />
+                <GameWeatherCard weather={weather} loading={weatherLoading} />
+              </>
+            )}
+          </div>
         )}
 
         {step === 3 && (
           <div className="space-y-4">
+            {showWeather && (
+              <WeatherRainAlert weather={weather} loading={weatherLoading} />
+            )}
             <div className="space-y-2">
               <Label>{t.create.maxPlayers}</Label>
               <Input
