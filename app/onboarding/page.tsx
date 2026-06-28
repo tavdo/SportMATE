@@ -19,6 +19,7 @@ import {
 } from "@/lib/auth-client";
 import { createOrUpdatePlayer } from "@/lib/api";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
+import { Logo } from "@/components/layout/Logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -194,6 +195,9 @@ export default function OnboardingPage() {
       </div>
 
       <div className="mb-8 text-center">
+        <div className="mb-4 flex justify-center">
+          <Logo size={80} priority />
+        </div>
         <h1 className="text-3xl font-bold text-primary">{t.appName}</h1>
         <p className="mt-2 text-muted-foreground">{subtitle}</p>
       </div>
