@@ -201,5 +201,10 @@ export const en = {
     verified: "Verified",
     actions: "Actions",
     noData: "No data",
+    mapLocation: "Location on map",
+    pickOnMap: "Click the map or drag the marker — coordinates update automatically.",
+    existingVenuesOnMap: "Gray dots are venues already added.",
+    useMyLocation: "My location",
+    locationError: "Could not get your location. Enable GPS or pick a spot on the map.",
   },
 } satisfies Messages;

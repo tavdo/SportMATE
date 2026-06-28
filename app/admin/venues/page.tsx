@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import dynamic from "next/dynamic";
 import type { SportType, Venue } from "@/lib/types";
 import { SPORT_EMOJI } from "@/lib/types";
 import { apiFetch } from "@/lib/api";
@@ -11,6 +12,19 @@ import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
 const sports: SportType[] = ["football", "basketball", "volleyball"];
+
+const VenueLocationPicker = dynamic(
+  () =>
+    import("@/components/admin/VenueLocationPicker").then(
+      (m) => m.VenueLocationPicker
+    ),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="h-72 animate-pulse rounded-xl bg-muted sm:col-span-2 sm:h-96" />
+    ),
+  }
+);
 
 const emptyForm = {
   name: "",
@@ -30,6 +44,7 @@ export default function AdminVenuesPage() {
   const [form, setForm] = useState(emptyForm);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [mapCenterTick, setMapCenterTick] = useState(0);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -59,6 +74,7 @@ export default function AdminVenuesPage() {
   function startEdit(venue: Venue) {
     setEditingId(venue.id);
     setShowForm(true);
+    setMapCenterTick((n) => n + 1);
     setForm({
       name: venue.name,
       lat: String(venue.lat),
@@ -69,6 +85,21 @@ export default function AdminVenuesPage() {
       is_indoor: venue.is_indoor,
       is_free: venue.is_free,
     });
+  }
+
+  function handleLocationChange(lat: number, lng: number) {
+    setForm((f) => ({
+      ...f,
+      lat: String(lat),
+      lng: String(lng),
+    }));
+  }
+
+  function openAddForm() {
+    setEditingId(null);
+    setForm(emptyForm);
+    setShowForm(true);
+    setMapCenterTick((n) => n + 1);
   }
 
   function resetForm() {
@@ -119,7 +150,7 @@ export default function AdminVenuesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">{t.admin.venues}</h1>
-        <Button onClick={() => { resetForm(); setShowForm(true); }}>
+        <Button onClick={openAddForm}>
           {t.admin.addVenue}
         </Button>
       </div>
@@ -143,6 +174,21 @@ export default function AdminVenuesPage() {
               <Label>{t.admin.lng}</Label>
               <Input type="number" step="any" value={form.lng} onChange={(e) => setForm({ ...form, lng: e.target.value })} required />
             </div>
+            <VenueLocationPicker
+              lat={Number(form.lat)}
+              lng={Number(form.lng)}
+              onChange={handleLocationChange}
+              existingVenues={venues}
+              excludeVenueId={editingId}
+              centerTrigger={mapCenterTick}
+              labels={{
+                mapLocation: t.admin.mapLocation,
+                pickHint: t.admin.pickOnMap,
+                existingHint: t.admin.existingVenuesOnMap,
+                useMyLocation: t.admin.useMyLocation,
+                locationError: t.admin.locationError,
+              }}
+            />
           </div>
           <div className="space-y-2">
             <Label>{t.admin.sports}</Label>
