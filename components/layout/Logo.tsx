@@ -7,11 +7,11 @@ interface LogoProps {
   priority?: boolean;
 }
 
-/** Square brand mark (S icon) */
+/** Square app icon (green) */
 export function Logo({ size = 48, className, priority }: LogoProps) {
   return (
     <Image
-      src="/icons/logo.png"
+      src="/icons/logo-icon.svg"
       alt="SportMate"
       width={size}
       height={size}
@@ -21,11 +21,48 @@ export function Logo({ size = 48, className, priority }: LogoProps) {
   );
 }
 
-/** App icon for favicons / PWA references */
+/** Full wordmark with Batumi subtitle */
+export function LogoHorizontal({
+  className,
+  priority,
+  width = 280,
+  height = 81,
+}: {
+  className?: string;
+  priority?: boolean;
+  width?: number;
+  height?: number;
+}) {
+  return (
+    <Image
+      src="/icons/logo-horizontal.svg"
+      alt="SportMate Batumi"
+      width={width}
+      height={height}
+      priority={priority}
+      className={cn("h-auto w-auto max-w-[min(100%,280px)] object-contain", className)}
+    />
+  );
+}
+
+/** S mark without background — dark UI */
+export function LogoMono({ size = 48, className }: LogoProps) {
+  return (
+    <Image
+      src="/icons/logo-mono.svg"
+      alt="SportMate"
+      width={size}
+      height={Math.round(size * 0.62)}
+      className={cn("object-contain", className)}
+    />
+  );
+}
+
+/** PWA / favicon raster */
 export function AppIcon({ size = 48, className }: LogoProps) {
   return (
     <Image
-      src="/icons/icon.png"
+      src="/icons/icon-192.png"
       alt="SportMate"
       width={size}
       height={size}
