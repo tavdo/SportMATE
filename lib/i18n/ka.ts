@@ -83,6 +83,8 @@ export const ka = {
     venue: "მოედანი",
     dateTime: "დრო",
     note: "შენიშვნა",
+    skillLevel: "დონე",
+    spots: "ადგილები",
   },
 
   create: {
@@ -104,6 +106,7 @@ export const ka = {
     back: "უკან",
     listView: "სია",
     mapView: "რუკა",
+    noVenues: "მოედნები ვერ მოიძებნა",
   },
 
   weather: {

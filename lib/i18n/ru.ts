@@ -84,6 +84,8 @@ export const ru = {
     venue: "Площадка",
     dateTime: "Время",
     note: "Заметка",
+    skillLevel: "Уровень",
+    spots: "Места",
   },
 
   create: {
@@ -105,6 +107,7 @@ export const ru = {
     back: "Назад",
     listView: "Список",
     mapView: "Карта",
+    noVenues: "Площадки не найдены",
   },
 
   weather: {

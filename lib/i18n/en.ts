@@ -86,6 +86,8 @@ export const en = {
     venue: "Venue",
     dateTime: "Time",
     note: "Note",
+    skillLevel: "Skill level",
+    spots: "Spots",
   },
 
   create: {
@@ -107,6 +109,7 @@ export const en = {
     back: "Back",
     listView: "List",
     mapView: "Map",
+    noVenues: "No venues found",
   },
 
   weather: {

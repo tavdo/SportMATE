@@ -4,6 +4,8 @@ import { docData } from "@/lib/firestore/helpers";
 import { effectiveSessionStatus } from "@/lib/types";
 import type { ParticipantWithPlayer, SessionFeed, Venue } from "@/lib/types";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(
   _req: NextRequest,
   { params }: { params: { id: string } }

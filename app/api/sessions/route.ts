@@ -6,6 +6,8 @@ import type { Player, SessionFeed, Venue } from "@/lib/types";
 import { requireUser, isAuthUser } from "@/lib/request-auth";
 import { tFromRequest } from "@/lib/i18n/server";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(req: NextRequest) {
   try {
     const { searchParams } = req.nextUrl;

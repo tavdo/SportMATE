@@ -153,22 +153,22 @@ export default function SessionPage() {
         />
 
         <Card>
-          <CardContent className="space-y-3 p-4">
-            <div>
+          <CardContent className="divide-y p-0">
+            <div className="space-y-1 p-4">
               <div className="text-sm text-muted-foreground">{t.session.venue}</div>
               <div className="font-semibold">{session.venue_name}</div>
               {session.venue?.note && (
-                <p className="mt-1 text-sm text-muted-foreground">
-                  {session.venue.note}
-                </p>
+                <p className="text-sm text-muted-foreground">{session.venue.note}</p>
               )}
             </div>
 
             {session.venue && (
-              <MiniMap lat={session.venue.lat} lng={session.venue.lng} />
+              <div className="px-4 pb-4">
+                <MiniMap lat={session.venue.lat} lng={session.venue.lng} />
+              </div>
             )}
 
-            <div>
+            <div className="space-y-1 p-4">
               <div className="text-sm text-muted-foreground">{t.session.dateTime}</div>
               <div className="font-medium">
                 {formatDateTime(session.starts_at, locale)}
@@ -176,31 +176,33 @@ export default function SessionPage() {
             </div>
 
             {showWeather && (
-              <GameWeatherCard weather={weather} loading={weatherLoading} />
+              <div className="p-4">
+                <GameWeatherCard weather={weather} loading={weatherLoading} />
+              </div>
             )}
 
-            <div className="flex gap-4">
-              <div>
-                <div className="text-sm text-muted-foreground">{t.create.skill}</div>
-                <div>{t.skill[session.skill]}</div>
+            <div className="grid grid-cols-2 gap-4 p-4">
+              <div className="space-y-1">
+                <div className="text-sm text-muted-foreground">{t.session.skillLevel}</div>
+                <div className="font-medium">{t.skill[session.skill]}</div>
               </div>
-              <div>
-                <div className="text-sm text-muted-foreground">{t.map.players}</div>
-                <div className="text-lg font-bold">
+              <div className="space-y-1">
+                <div className="text-sm text-muted-foreground">{t.session.spots}</div>
+                <div className="text-lg font-bold leading-tight">
                   {session.current_players}/{session.max_players}
                 </div>
               </div>
             </div>
 
-            <div>
+            <div className="space-y-1 p-4">
               <div className="text-sm text-muted-foreground">{t.session.host}</div>
-              <div>{session.host_nickname}</div>
+              <div className="font-medium">{session.host_nickname}</div>
             </div>
 
             {session.note && (
-              <div>
+              <div className="space-y-1 p-4">
                 <div className="text-sm text-muted-foreground">{t.session.note}</div>
-                <p>{session.note}</p>
+                <p className="text-sm leading-relaxed">{session.note}</p>
               </div>
             )}
           </CardContent>
