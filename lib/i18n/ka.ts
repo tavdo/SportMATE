@@ -17,6 +17,8 @@ export const ka = {
     nicknamePlaceholder: "მაგ: ნიკა",
     sportsLabel: "სპორტი",
     colorLabel: "ფერი",
+    genderLabel: "სქესი",
+    genderRequired: "აირჩიე სქესი",
     submit: "დაწყება",
     nicknameRequired: "ფსევდონიმი სავალდებულოა",
     sportsRequired: "აირჩიე მინიმუმ ერთი სპორტი",
@@ -53,6 +55,13 @@ export const ka = {
     intermediate: "საშუალო",
     advanced: "გამოცდილი",
   } satisfies Record<SkillLevel, string>,
+
+  gender: {
+    male: "კაცი",
+    female: "ქალი",
+    other: "სხვა",
+    prefer_not_to_say: "არ მინდა მიუთითო",
+  },
 
   map: {
     createGame: "თამაშის შექმნა",
@@ -151,6 +160,7 @@ export const ka = {
     title: "პროფილი",
     nickname: "ფსევდონიმი",
     sports: "სპორტი",
+    gender: "სქესი",
     save: "შენახვა",
     saved: "შენახულია",
     verified: "დადასტურებული",
@@ -220,6 +230,7 @@ export const ka = {
     players: "მოთამაშეები",
     status: "სტატუსი",
     phone: "ტელეფონი",
+    gender: "სქესი",
     nickname: "ფსევდონიმი",
     gamesPlayed: "ნათამაშები",
     noShows: "გაცდენილი",

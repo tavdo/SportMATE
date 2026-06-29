@@ -1,13 +1,22 @@
 export type SportType = "football" | "basketball" | "volleyball";
 export type SkillLevel = "any" | "beginner" | "intermediate" | "advanced";
+export type Gender = "male" | "female" | "other" | "prefer_not_to_say";
 export type SessionStatus = "open" | "full" | "cancelled" | "done";
 export type ParticipantStatus = "going" | "cancelled";
+
+export const GENDER_OPTIONS: Gender[] = [
+  "male",
+  "female",
+  "other",
+  "prefer_not_to_say",
+];
 
 export interface Player {
   id: string;
   nickname: string;
   avatar_color: string;
   preferred_sports: SportType[];
+  gender: Gender | null;
   games_played: number;
   no_shows: number;
   is_verified: boolean;

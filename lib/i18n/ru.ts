@@ -18,6 +18,8 @@ export const ru = {
     nicknamePlaceholder: "напр. Алекс",
     sportsLabel: "Спорт",
     colorLabel: "Цвет",
+    genderLabel: "Пол",
+    genderRequired: "Выбери пол",
     submit: "Начать",
     nicknameRequired: "Никнейм обязателен",
     sportsRequired: "Выбери хотя бы один вид спорта",
@@ -54,6 +56,13 @@ export const ru = {
     intermediate: "Средний",
     advanced: "Продвинутый",
   } satisfies Record<SkillLevel, string>,
+
+  gender: {
+    male: "Мужской",
+    female: "Женский",
+    other: "Другое",
+    prefer_not_to_say: "Не указывать",
+  },
 
   map: {
     createGame: "Создать игру",
@@ -152,6 +161,7 @@ export const ru = {
     title: "Профиль",
     nickname: "Никнейм",
     sports: "Спорт",
+    gender: "Пол",
     save: "Сохранить",
     saved: "Сохранено",
     verified: "Подтверждён",
@@ -221,6 +231,7 @@ export const ru = {
     players: "Игроки",
     status: "Статус",
     phone: "Телефон",
+    gender: "Пол",
     nickname: "Никнейм",
     gamesPlayed: "Сыграно игр",
     noShows: "Неявки",

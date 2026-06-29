@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useT } from "@/lib/hooks/useLocale";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { usePlayer } from "@/lib/hooks/usePlayer";
-import { AVATAR_COLORS, SPORT_EMOJI, type SportType } from "@/lib/types";
+import { AVATAR_COLORS, SPORT_EMOJI, type SportType, type Gender } from "@/lib/types";
 import {
   normalizeGeorgianDigits,
   isValidGeorgianMobile,
@@ -20,6 +20,7 @@ import {
 import { createOrUpdatePlayer } from "@/lib/api";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { LogoHorizontal } from "@/components/layout/Logo";
+import { GenderPicker } from "@/components/profile/GenderPicker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -62,6 +63,7 @@ export default function OnboardingPage() {
   const [password, setPassword] = useState("");
   const [nickname, setNickname] = useState("");
   const [selectedSports, setSelectedSports] = useState<SportType[]>([]);
+  const [gender, setGender] = useState<Gender | null>(null);
   const [color, setColor] = useState(AVATAR_COLORS[0]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -153,6 +155,10 @@ export default function OnboardingPage() {
       setError(t.onboarding.sportsRequired);
       return;
     }
+    if (!gender) {
+      setError(t.onboarding.genderRequired);
+      return;
+    }
 
     setLoading(true);
     try {
@@ -160,6 +166,7 @@ export default function OnboardingPage() {
         nickname: nickname.trim(),
         preferred_sports: selectedSports,
         avatar_color: color,
+        gender,
       });
       setPlayer(created);
       router.replace("/");
@@ -330,6 +337,11 @@ export default function OnboardingPage() {
                 </button>
               ))}
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label>{t.onboarding.genderLabel}</Label>
+            <GenderPicker value={gender} onChange={setGender} />
           </div>
 
           <div className="space-y-2">

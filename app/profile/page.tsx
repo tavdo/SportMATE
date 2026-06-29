@@ -1,9 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import type { SportType } from "@/lib/types";
+import type { SportType, Gender } from "@/lib/types";
 import { SPORT_EMOJI, AVATAR_COLORS } from "@/lib/types";
 import { useT } from "@/lib/hooks/useLocale";
+import { GenderPicker, genderLabel } from "@/components/profile/GenderPicker";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { createOrUpdatePlayer } from "@/lib/api";
 import { signOutUser } from "@/lib/auth-client";
@@ -26,6 +27,7 @@ export default function ProfilePage() {
   const [selectedSports, setSelectedSports] = useState<SportType[]>(
     player?.preferred_sports ?? []
   );
+  const [gender, setGender] = useState<Gender | null>(player?.gender ?? null);
   const [color, setColor] = useState(player?.avatar_color ?? AVATAR_COLORS[0]);
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -45,12 +47,14 @@ export default function ProfilePage() {
   }
 
   async function handleSave() {
+    if (!gender) return;
     setLoading(true);
     try {
       const updated = await createOrUpdatePlayer({
         nickname: nickname.trim(),
         preferred_sports: selectedSports,
         avatar_color: color,
+        gender,
       });
       setPlayer(updated);
       setEditing(false);
@@ -143,6 +147,11 @@ export default function ProfilePage() {
             </div>
 
             <div className="space-y-2">
+              <Label>{t.profile.gender}</Label>
+              <GenderPicker value={gender} onChange={setGender} />
+            </div>
+
+            <div className="space-y-2">
               <Label>{t.onboarding.colorLabel}</Label>
               <div className="flex flex-wrap gap-2">
                 {AVATAR_COLORS.map((c) => (
@@ -171,7 +180,7 @@ export default function ProfilePage() {
               <Button
                 className="flex-1"
                 onClick={handleSave}
-                disabled={loading}
+                disabled={loading || !gender}
               >
                 {t.profile.save}
               </Button>
@@ -190,7 +199,18 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            <Button className="w-full" variant="outline" onClick={() => setEditing(true)}>
+            <div>
+              <div className="text-sm text-muted-foreground">{t.profile.gender}</div>
+              <div className="mt-1 font-medium">{genderLabel(player.gender, t)}</div>
+            </div>
+
+            <Button className="w-full" variant="outline" onClick={() => {
+              setNickname(player.nickname);
+              setSelectedSports(player.preferred_sports);
+              setGender(player.gender);
+              setColor(player.avatar_color);
+              setEditing(true);
+            }}>
               {t.profile.editProfile}
             </Button>
 

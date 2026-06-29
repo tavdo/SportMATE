@@ -20,6 +20,8 @@ export const en = {
     nicknamePlaceholder: "e.g. Alex",
     sportsLabel: "Sports",
     colorLabel: "Color",
+    genderLabel: "Gender",
+    genderRequired: "Please select your gender",
     submit: "Get started",
     nicknameRequired: "Nickname is required",
     sportsRequired: "Select at least one sport",
@@ -56,6 +58,13 @@ export const en = {
     intermediate: "Intermediate",
     advanced: "Advanced",
   } satisfies Record<SkillLevel, string>,
+
+  gender: {
+    male: "Male",
+    female: "Female",
+    other: "Other",
+    prefer_not_to_say: "Prefer not to say",
+  },
 
   map: {
     createGame: "Create game",
@@ -154,6 +163,7 @@ export const en = {
     title: "Profile",
     nickname: "Nickname",
     sports: "Sports",
+    gender: "Gender",
     save: "Save",
     saved: "Saved",
     verified: "Verified",
@@ -223,6 +233,7 @@ export const en = {
     players: "Players",
     status: "Status",
     phone: "Phone",
+    gender: "Gender",
     nickname: "Nickname",
     gamesPlayed: "Games played",
     noShows: "No-shows",
