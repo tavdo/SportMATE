@@ -95,7 +95,7 @@ export default function CreatePage() {
     lat: venue?.lat,
     lng: venue?.lng,
     at: startsAtIso,
-    enabled: showWeather && (step === 2 || step === 3),
+    enabled: showWeather,
   });
 
   return (
@@ -174,7 +174,10 @@ export default function CreatePage() {
         {step === 3 && (
           <div className="space-y-4">
             {showWeather && (
-              <WeatherRainAlert weather={weather} loading={weatherLoading} />
+              <>
+                <WeatherRainAlert weather={weather} loading={weatherLoading} />
+                <GameWeatherCard weather={weather} loading={weatherLoading} />
+              </>
             )}
             <div className="space-y-2">
               <Label>{t.create.maxPlayers}</Label>
