@@ -33,9 +33,15 @@ export default function CreatePage() {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    apiFetch<Venue[]>("/api/venues")
-      .then(setVenues)
-      .catch(() => setVenues([]));
+    function loadVenues() {
+      apiFetch<Venue[]>("/api/venues", { cache: "no-store" })
+        .then(setVenues)
+        .catch(() => setVenues([]));
+    }
+
+    loadVenues();
+    window.addEventListener("focus", loadVenues);
+    return () => window.removeEventListener("focus", loadVenues);
   }, []);
 
   function next() {
