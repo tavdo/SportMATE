@@ -11,13 +11,6 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { VenuePicker } from "@/components/create/VenuePicker";
 import { TimePicker } from "@/components/create/TimePicker";
 import { GameWeatherCard, WeatherRainAlert } from "@/components/weather/GameWeather";
@@ -191,20 +184,25 @@ export default function CreatePage() {
             </div>
             <div className="space-y-2">
               <Label>{t.create.skill}</Label>
-              <Select value={skill} onValueChange={(v) => setSkill(v as SkillLevel)}>
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {(["any", "beginner", "intermediate", "advanced"] as SkillLevel[]).map(
-                    (s) => (
-                      <SelectItem key={s} value={s}>
-                        {t.skill[s]}
-                      </SelectItem>
-                    )
-                  )}
-                </SelectContent>
-              </Select>
+              <div className="grid gap-2">
+                {(["any", "beginner", "intermediate", "advanced"] as SkillLevel[]).map(
+                  (s) => (
+                    <button
+                      key={s}
+                      type="button"
+                      onClick={() => setSkill(s)}
+                      className={cn(
+                        "rounded-xl border-2 px-4 py-3 text-left text-sm font-medium transition-colors",
+                        skill === s
+                          ? "border-primary bg-primary/10 text-foreground"
+                          : "border-muted bg-background text-foreground"
+                      )}
+                    >
+                      {t.skill[s]}
+                    </button>
+                  )
+                )}
+              </div>
             </div>
             <div className="space-y-2">
               <Label>{t.create.note}</Label>
