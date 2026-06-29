@@ -19,6 +19,8 @@ export const ka = {
     colorLabel: "ფერი",
     genderLabel: "სქესი",
     genderRequired: "აირჩიე სქესი",
+    ageRangeLabel: "ასაკი",
+    ageRangeRequired: "აირჩიე ასაკის დიაპაზონი",
     submit: "დაწყება",
     nicknameRequired: "ფსევდონიმი სავალდებულოა",
     sportsRequired: "აირჩიე მინიმუმ ერთი სპორტი",
@@ -61,6 +63,14 @@ export const ka = {
     female: "ქალი",
     other: "სხვა",
     prefer_not_to_say: "არ მინდა მიუთითო",
+  },
+
+  ageRange: {
+    "18_24": "18–24",
+    "25_34": "25–34",
+    "35_44": "35–44",
+    "45_54": "45–54",
+    "55_plus": "55+",
   },
 
   map: {
@@ -161,6 +171,7 @@ export const ka = {
     nickname: "ფსევდონიმი",
     sports: "სპორტი",
     gender: "სქესი",
+    ageRange: "ასაკი",
     save: "შენახვა",
     saved: "შენახულია",
     verified: "დადასტურებული",
@@ -231,6 +242,7 @@ export const ka = {
     status: "სტატუსი",
     phone: "ტელეფონი",
     gender: "სქესი",
+    ageRange: "ასაკი",
     nickname: "ფსევდონიმი",
     gamesPlayed: "ნათამაშები",
     noShows: "გაცდენილი",

@@ -5,6 +5,7 @@ import type { Player } from "@/lib/types";
 import { apiFetch } from "@/lib/api";
 import { useT } from "@/lib/hooks/useLocale";
 import { genderLabel } from "@/components/profile/GenderPicker";
+import { ageRangeLabel } from "@/components/profile/AgeRangePicker";
 import { Button } from "@/components/ui/button";
 
 export default function AdminUsersPage() {
@@ -51,6 +52,7 @@ export default function AdminUsersPage() {
                 <th className="p-3 text-left">{t.admin.nickname}</th>
                 <th className="p-3 text-left">{t.admin.phone}</th>
                 <th className="p-3 text-left">{t.admin.gender}</th>
+                <th className="p-3 text-left">{t.admin.ageRange}</th>
                 <th className="p-3 text-left">{t.admin.gamesPlayed}</th>
                 <th className="p-3 text-left">{t.admin.noShows}</th>
                 <th className="p-3 text-left">{t.admin.status}</th>
@@ -63,6 +65,7 @@ export default function AdminUsersPage() {
                   <td className="p-3 font-medium">{p.nickname}</td>
                   <td className="p-3">{p.phone_number ?? p.email ?? "—"}</td>
                   <td className="p-3">{genderLabel(p.gender, t)}</td>
+                  <td className="p-3">{ageRangeLabel(p.age_range, t)}</td>
                   <td className="p-3">{p.games_played}</td>
                   <td className="p-3">{p.no_shows}</td>
                   <td className="p-3">

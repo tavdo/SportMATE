@@ -3,9 +3,10 @@ import { getAdminDb } from "@/lib/firebase-admin";
 import { docData } from "@/lib/firestore/helpers";
 import { requireUser, isAuthUser } from "@/lib/request-auth";
 import { tFromRequest } from "@/lib/i18n/server";
-import type { Player, Gender } from "@/lib/types";
+import type { Player, Gender, AgeRange } from "@/lib/types";
 
 const VALID_GENDERS: Gender[] = ["male", "female", "other", "prefer_not_to_say"];
+const VALID_AGE_RANGES: AgeRange[] = ["18_24", "25_34", "35_44", "45_54", "55_plus"];
 
 export async function POST(req: NextRequest) {
   try {
@@ -13,7 +14,7 @@ export async function POST(req: NextRequest) {
     if (!isAuthUser(auth)) return auth;
 
     const body = await req.json();
-    const { nickname, preferred_sports, avatar_color, gender } = body;
+    const { nickname, preferred_sports, avatar_color, gender, age_range } = body;
 
     if (!nickname || typeof nickname !== "string" || nickname.trim().length < 2) {
       return NextResponse.json({ error: "Invalid nickname" }, { status: 400 });
@@ -27,6 +28,10 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Select gender" }, { status: 400 });
     }
 
+    if (!age_range || !VALID_AGE_RANGES.includes(age_range)) {
+      return NextResponse.json({ error: "Select age range" }, { status: 400 });
+    }
+
     const db = getAdminDb();
     const now = new Date().toISOString();
     const player: Player = {
@@ -35,6 +40,7 @@ export async function POST(req: NextRequest) {
       preferred_sports,
       avatar_color: avatar_color ?? "#22c55e",
       gender,
+      age_range,
       games_played: 0,
       no_shows: 0,
       is_verified: true,

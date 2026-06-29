@@ -36,6 +36,7 @@ export async function createOrUpdatePlayer(body: {
   preferred_sports: string[];
   avatar_color: string;
   gender: string;
+  age_range: string;
 }): Promise<Player> {
   return apiFetch<Player>("/api/players", {
     method: "POST",

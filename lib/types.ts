@@ -11,12 +11,23 @@ export const GENDER_OPTIONS: Gender[] = [
   "prefer_not_to_say",
 ];
 
+export type AgeRange = "18_24" | "25_34" | "35_44" | "45_54" | "55_plus";
+
+export const AGE_RANGE_OPTIONS: AgeRange[] = [
+  "18_24",
+  "25_34",
+  "35_44",
+  "45_54",
+  "55_plus",
+];
+
 export interface Player {
   id: string;
   nickname: string;
   avatar_color: string;
   preferred_sports: SportType[];
   gender: Gender | null;
+  age_range: AgeRange | null;
   games_played: number;
   no_shows: number;
   is_verified: boolean;

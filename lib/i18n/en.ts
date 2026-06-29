@@ -22,6 +22,8 @@ export const en = {
     colorLabel: "Color",
     genderLabel: "Gender",
     genderRequired: "Please select your gender",
+    ageRangeLabel: "Age range",
+    ageRangeRequired: "Please select your age range",
     submit: "Get started",
     nicknameRequired: "Nickname is required",
     sportsRequired: "Select at least one sport",
@@ -64,6 +66,14 @@ export const en = {
     female: "Female",
     other: "Other",
     prefer_not_to_say: "Prefer not to say",
+  },
+
+  ageRange: {
+    "18_24": "18–24",
+    "25_34": "25–34",
+    "35_44": "35–44",
+    "45_54": "45–54",
+    "55_plus": "55+",
   },
 
   map: {
@@ -164,6 +174,7 @@ export const en = {
     nickname: "Nickname",
     sports: "Sports",
     gender: "Gender",
+    ageRange: "Age range",
     save: "Save",
     saved: "Saved",
     verified: "Verified",
@@ -234,6 +245,7 @@ export const en = {
     status: "Status",
     phone: "Phone",
     gender: "Gender",
+    ageRange: "Age",
     nickname: "Nickname",
     gamesPlayed: "Games played",
     noShows: "No-shows",

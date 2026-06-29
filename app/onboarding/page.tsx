@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useT } from "@/lib/hooks/useLocale";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { usePlayer } from "@/lib/hooks/usePlayer";
-import { AVATAR_COLORS, SPORT_EMOJI, type SportType, type Gender } from "@/lib/types";
+import { AVATAR_COLORS, SPORT_EMOJI, type SportType, type Gender, type AgeRange } from "@/lib/types";
 import {
   normalizeGeorgianDigits,
   isValidGeorgianMobile,
@@ -21,6 +21,7 @@ import { createOrUpdatePlayer } from "@/lib/api";
 import { LanguageSwitcher } from "@/components/layout/LanguageSwitcher";
 import { LogoHorizontal } from "@/components/layout/Logo";
 import { GenderPicker } from "@/components/profile/GenderPicker";
+import { AgeRangePicker } from "@/components/profile/AgeRangePicker";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -64,6 +65,7 @@ export default function OnboardingPage() {
   const [nickname, setNickname] = useState("");
   const [selectedSports, setSelectedSports] = useState<SportType[]>([]);
   const [gender, setGender] = useState<Gender | null>(null);
+  const [ageRange, setAgeRange] = useState<AgeRange | null>(null);
   const [color, setColor] = useState(AVATAR_COLORS[0]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -159,6 +161,10 @@ export default function OnboardingPage() {
       setError(t.onboarding.genderRequired);
       return;
     }
+    if (!ageRange) {
+      setError(t.onboarding.ageRangeRequired);
+      return;
+    }
 
     setLoading(true);
     try {
@@ -167,6 +173,7 @@ export default function OnboardingPage() {
         preferred_sports: selectedSports,
         avatar_color: color,
         gender,
+        age_range: ageRange,
       });
       setPlayer(created);
       router.replace("/");
@@ -342,6 +349,11 @@ export default function OnboardingPage() {
           <div className="space-y-2">
             <Label>{t.onboarding.genderLabel}</Label>
             <GenderPicker value={gender} onChange={setGender} />
+          </div>
+
+          <div className="space-y-2">
+            <Label>{t.onboarding.ageRangeLabel}</Label>
+            <AgeRangePicker value={ageRange} onChange={setAgeRange} />
           </div>
 
           <div className="space-y-2">

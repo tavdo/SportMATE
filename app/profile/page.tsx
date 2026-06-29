@@ -1,10 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import type { SportType, Gender } from "@/lib/types";
+import type { SportType, Gender, AgeRange } from "@/lib/types";
 import { SPORT_EMOJI, AVATAR_COLORS } from "@/lib/types";
 import { useT } from "@/lib/hooks/useLocale";
 import { GenderPicker, genderLabel } from "@/components/profile/GenderPicker";
+import { AgeRangePicker, ageRangeLabel } from "@/components/profile/AgeRangePicker";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { createOrUpdatePlayer } from "@/lib/api";
 import { signOutUser } from "@/lib/auth-client";
@@ -28,6 +29,7 @@ export default function ProfilePage() {
     player?.preferred_sports ?? []
   );
   const [gender, setGender] = useState<Gender | null>(player?.gender ?? null);
+  const [ageRange, setAgeRange] = useState<AgeRange | null>(player?.age_range ?? null);
   const [color, setColor] = useState(player?.avatar_color ?? AVATAR_COLORS[0]);
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -47,7 +49,7 @@ export default function ProfilePage() {
   }
 
   async function handleSave() {
-    if (!gender) return;
+    if (!gender || !ageRange) return;
     setLoading(true);
     try {
       const updated = await createOrUpdatePlayer({
@@ -55,6 +57,7 @@ export default function ProfilePage() {
         preferred_sports: selectedSports,
         avatar_color: color,
         gender,
+        age_range: ageRange,
       });
       setPlayer(updated);
       setEditing(false);
@@ -152,6 +155,11 @@ export default function ProfilePage() {
             </div>
 
             <div className="space-y-2">
+              <Label>{t.profile.ageRange}</Label>
+              <AgeRangePicker value={ageRange} onChange={setAgeRange} />
+            </div>
+
+            <div className="space-y-2">
               <Label>{t.onboarding.colorLabel}</Label>
               <div className="flex flex-wrap gap-2">
                 {AVATAR_COLORS.map((c) => (
@@ -180,7 +188,7 @@ export default function ProfilePage() {
               <Button
                 className="flex-1"
                 onClick={handleSave}
-                disabled={loading || !gender}
+                disabled={loading || !gender || !ageRange}
               >
                 {t.profile.save}
               </Button>
@@ -204,10 +212,16 @@ export default function ProfilePage() {
               <div className="mt-1 font-medium">{genderLabel(player.gender, t)}</div>
             </div>
 
+            <div>
+              <div className="text-sm text-muted-foreground">{t.profile.ageRange}</div>
+              <div className="mt-1 font-medium">{ageRangeLabel(player.age_range, t)}</div>
+            </div>
+
             <Button className="w-full" variant="outline" onClick={() => {
               setNickname(player.nickname);
               setSelectedSports(player.preferred_sports);
               setGender(player.gender);
+              setAgeRange(player.age_range);
               setColor(player.avatar_color);
               setEditing(true);
             }}>

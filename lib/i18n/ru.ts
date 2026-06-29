@@ -20,6 +20,8 @@ export const ru = {
     colorLabel: "Цвет",
     genderLabel: "Пол",
     genderRequired: "Выбери пол",
+    ageRangeLabel: "Возраст",
+    ageRangeRequired: "Выбери возрастной диапазон",
     submit: "Начать",
     nicknameRequired: "Никнейм обязателен",
     sportsRequired: "Выбери хотя бы один вид спорта",
@@ -62,6 +64,14 @@ export const ru = {
     female: "Женский",
     other: "Другое",
     prefer_not_to_say: "Не указывать",
+  },
+
+  ageRange: {
+    "18_24": "18–24",
+    "25_34": "25–34",
+    "35_44": "35–44",
+    "45_54": "45–54",
+    "55_plus": "55+",
   },
 
   map: {
@@ -162,6 +172,7 @@ export const ru = {
     nickname: "Никнейм",
     sports: "Спорт",
     gender: "Пол",
+    ageRange: "Возраст",
     save: "Сохранить",
     saved: "Сохранено",
     verified: "Подтверждён",
@@ -232,6 +243,7 @@ export const ru = {
     status: "Статус",
     phone: "Телефон",
     gender: "Пол",
+    ageRange: "Возраст",
     nickname: "Никнейм",
     gamesPlayed: "Сыграно игр",
     noShows: "Неявки",
