@@ -147,6 +147,11 @@ export const ru = {
     rainWarning:
       "Вероятность дождя {{percent}}% в это время. Возможно, стоит пересмотреть игру на открытой площадке.",
     disclaimer: "Прогноз может измениться",
+    weatherTip: "Совет по погоде",
+    suggestReschedule:
+      "Вероятность дождя {{percent}}% в {{gameTime}}. Рекомендуем {{suggestedTime}} (дождь {{suggestedPercent}}%).",
+    noBetterTime:
+      "Лучшее время в этот день не найдено — рассмотри другой день или крытую площадку.",
     conditions: {
       clear: "Ясно",
       cloudy: "Облачно",
@@ -188,6 +193,14 @@ export const ru = {
     email: "Email",
     logout: "Выйти",
     adminPanel: "Админ-панель",
+  },
+
+  publicProfile: {
+    title: "Профиль игрока",
+    notFound: "Игрок не найден",
+    memberSince: "В приложении с",
+    reliability: "Надёжность",
+    editMyProfile: "Редактировать мой профиль",
   },
 
   common: {

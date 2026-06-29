@@ -10,13 +10,63 @@ import {
   Sun,
 } from "lucide-react";
 import type { GameWeather, WeatherCondition } from "@/lib/weather";
-import { useT } from "@/lib/hooks/useLocale";
+import { useLocale, useT } from "@/lib/hooks/useLocale";
+import { formatDateTime, formatTime } from "@/lib/utils";
 import { cn } from "@/lib/utils";
+import { Lightbulb } from "lucide-react";
 
 function formatTemplate(template: string, vars: Record<string, string | number>) {
   return Object.entries(vars).reduce(
     (text, [key, value]) => text.replace(`{{${key}}}`, String(value)),
     template
+  );
+}
+
+function WeatherAdvice({
+  weather,
+  gameAt,
+  className,
+}: {
+  weather: GameWeather;
+  gameAt: string;
+  className?: string;
+}) {
+  const t = useT();
+  const { locale } = useLocale();
+
+  if (!weather.isRainLikely) return null;
+
+  const gameTime = formatDateTime(gameAt, locale);
+
+  if (weather.suggestion) {
+    const suggestedTime = formatTime(weather.suggestion.suggestedAt, locale);
+    return (
+      <div
+        className={cn(
+          "mt-3 flex gap-2 rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 text-sm text-sky-950 dark:border-sky-900 dark:bg-sky-950/30 dark:text-sky-100",
+          className
+        )}
+      >
+        <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-sky-600 dark:text-sky-400" />
+        <div>
+          <p className="font-medium">{t.weather.weatherTip}</p>
+          <p className="mt-1">
+            {formatTemplate(t.weather.suggestReschedule, {
+              gameTime,
+              percent: weather.precipitationProbability,
+              suggestedTime,
+              suggestedPercent: weather.suggestion.suggestedPrecipitationProbability,
+            })}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <p className={cn("mt-3 text-sm text-muted-foreground", className)}>
+      {t.weather.noBetterTime}
+    </p>
   );
 }
 
@@ -52,9 +102,10 @@ interface GameWeatherCardProps {
   weather: GameWeather | null;
   loading?: boolean;
   className?: string;
+  gameAt?: string | null;
 }
 
-export function GameWeatherCard({ weather, loading, className }: GameWeatherCardProps) {
+export function GameWeatherCard({ weather, loading, className, gameAt }: GameWeatherCardProps) {
   const t = useT();
 
   if (loading) {
@@ -106,6 +157,7 @@ export function GameWeatherCard({ weather, loading, className }: GameWeatherCard
           </div>
         </div>
       </div>
+      {gameAt && <WeatherAdvice weather={weather} gameAt={gameAt} />}
       <p className="mt-2 text-xs text-muted-foreground">{t.weather.disclaimer}</p>
     </div>
   );
@@ -117,7 +169,11 @@ interface WeatherRainAlertProps {
   className?: string;
 }
 
-export function WeatherRainAlert({ weather, loading, className }: WeatherRainAlertProps) {
+export function WeatherRainAlert({
+  weather,
+  loading,
+  className,
+}: WeatherRainAlertProps) {
   const t = useT();
 
   if (loading || !weather?.isRainLikely) return null;

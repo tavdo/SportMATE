@@ -146,6 +146,11 @@ export const ka = {
     rainWarning:
       "ამ დროს წვიმის შანსი {{percent}}%-ია. გარე მოედანზე თამაში შეიძლება გადაიფიქრო.",
     disclaimer: "პროგნოზი შეიძლება შეიცვალოს",
+    weatherTip: "ამინდის რჩევა",
+    suggestReschedule:
+      "{{gameTime}}-ზე წვიმის შანსი {{percent}}%. გირჩევთ {{suggestedTime}}-ს (წვიმა {{suggestedPercent}}%).",
+    noBetterTime:
+      "ამ დღეს უკეთესი დრო ვერ მოიძებნა — განიხილე სხვა დღე ან დახურული მოედანი.",
     conditions: {
       clear: "მზიანი",
       cloudy: "ღრუბლიანი",
@@ -187,6 +192,14 @@ export const ka = {
     email: "ელფოსტა",
     logout: "გასვლა",
     adminPanel: "ადმინ პანელი",
+  },
+
+  publicProfile: {
+    title: "მოთამაშის პროფილი",
+    notFound: "მოთამაშე ვერ მოიძებნა",
+    memberSince: "წევრია",
+    reliability: "სანდოობა",
+    editMyProfile: "ჩემი პროფილის რედაქტირება",
   },
 
   common: {

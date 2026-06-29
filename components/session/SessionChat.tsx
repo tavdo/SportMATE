@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { Send } from "lucide-react";
 import {
   collection,
@@ -17,6 +18,7 @@ import { formatTime } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { PlayerAvatar } from "@/components/profile/PlayerAvatar";
 import { cn } from "@/lib/utils";
 
 interface SessionChatProps {
@@ -111,12 +113,13 @@ export function SessionChat({
                   key={msg.id}
                   className={cn("flex gap-2", isMine && "flex-row-reverse")}
                 >
-                  <div
-                    className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-xs font-bold text-white"
-                    style={{ backgroundColor: msg.avatar_color }}
-                  >
-                    {msg.nickname.charAt(0).toUpperCase()}
-                  </div>
+                  <PlayerAvatar
+                    id={msg.player_id}
+                    nickname={msg.nickname}
+                    avatarColor={msg.avatar_color}
+                    size="sm"
+                    linkable={!isMine}
+                  />
                   <div
                     className={cn(
                       "max-w-[80%] rounded-2xl px-3 py-2",
@@ -131,7 +134,16 @@ export function SessionChat({
                         isMine ? "text-primary-foreground/80" : "text-muted-foreground"
                       )}
                     >
-                      <span className="font-medium">{msg.nickname}</span>
+                      {!isMine ? (
+                        <Link
+                          href={`/players/${msg.player_id}`}
+                          className="font-medium hover:underline"
+                        >
+                          {msg.nickname}
+                        </Link>
+                      ) : (
+                        <span className="font-medium">{msg.nickname}</span>
+                      )}
                       <span>{formatTime(msg.created_at, locale)}</span>
                     </div>
                     <p className="whitespace-pre-wrap break-words text-sm leading-relaxed">

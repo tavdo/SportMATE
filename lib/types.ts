@@ -37,6 +37,35 @@ export interface Player {
   is_banned?: boolean;
 }
 
+export type PublicPlayer = Pick<
+  Player,
+  | "id"
+  | "nickname"
+  | "avatar_color"
+  | "preferred_sports"
+  | "gender"
+  | "age_range"
+  | "games_played"
+  | "no_shows"
+  | "is_verified"
+  | "created_at"
+>;
+
+export function toPublicPlayer(player: Player): PublicPlayer {
+  return {
+    id: player.id,
+    nickname: player.nickname,
+    avatar_color: player.avatar_color,
+    preferred_sports: player.preferred_sports,
+    gender: player.gender,
+    age_range: player.age_range,
+    games_played: player.games_played,
+    no_shows: player.no_shows,
+    is_verified: player.is_verified,
+    created_at: player.created_at,
+  };
+}
+
 export interface SiteSettings {
   app_name: string;
   tagline: string;

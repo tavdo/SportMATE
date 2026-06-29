@@ -1,5 +1,5 @@
 import { getIdToken } from "./auth-client";
-import type { Player } from "./types";
+import type { Player, PublicPlayer } from "./types";
 
 export async function apiFetch<T>(
   url: string,
@@ -42,4 +42,8 @@ export async function createOrUpdatePlayer(body: {
     method: "POST",
     body: JSON.stringify(body),
   });
+}
+
+export async function fetchPublicPlayer(id: string): Promise<PublicPlayer> {
+  return apiFetch<PublicPlayer>(`/api/players/${id}/profile`);
 }

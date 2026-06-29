@@ -164,7 +164,11 @@ export default function CreatePage() {
             {showWeather && (
               <>
                 <WeatherRainAlert weather={weather} loading={weatherLoading} />
-                <GameWeatherCard weather={weather} loading={weatherLoading} />
+                <GameWeatherCard
+                  weather={weather}
+                  loading={weatherLoading}
+                  gameAt={startsAtIso}
+                />
               </>
             )}
           </div>
@@ -175,7 +179,11 @@ export default function CreatePage() {
             {showWeather && (
               <>
                 <WeatherRainAlert weather={weather} loading={weatherLoading} />
-                <GameWeatherCard weather={weather} loading={weatherLoading} />
+                <GameWeatherCard
+                  weather={weather}
+                  loading={weatherLoading}
+                  gameAt={startsAtIso}
+                />
               </>
             )}
             <div className="space-y-2">

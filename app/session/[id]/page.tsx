@@ -13,6 +13,7 @@ import { apiFetch } from "@/lib/api";
 import { getFirestoreDb } from "@/lib/firebase-client";
 import { collection, onSnapshot } from "firebase/firestore";
 import { formatDateTime } from "@/lib/utils";
+import { PlayerLink } from "@/components/profile/PlayerLink";
 import { PlayerList } from "@/components/session/PlayerList";
 import { JoinButton } from "@/components/session/JoinButton";
 import { SessionChat } from "@/components/session/SessionChat";
@@ -181,7 +182,11 @@ export default function SessionPage() {
 
             {showWeather && (
               <div className="p-4">
-                <GameWeatherCard weather={weather} loading={weatherLoading} />
+                <GameWeatherCard
+                  weather={weather}
+                  loading={weatherLoading}
+                  gameAt={session.starts_at}
+                />
               </div>
             )}
 
@@ -200,7 +205,7 @@ export default function SessionPage() {
 
             <div className="space-y-1 p-4">
               <div className="text-sm text-muted-foreground">{t.session.host}</div>
-              <div className="font-medium">{session.host_nickname}</div>
+              <PlayerLink id={session.host_id} nickname={session.host_nickname} />
             </div>
 
             {session.note && (

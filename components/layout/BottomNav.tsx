@@ -16,7 +16,7 @@ export function BottomNav() {
     { href: "/profile", label: t.nav.profile, icon: User },
   ];
 
-  if (pathname === "/onboarding" || pathname.startsWith("/create") || pathname.startsWith("/session/") || pathname.startsWith("/admin")) {
+  if (pathname === "/onboarding" || pathname.startsWith("/create") || pathname.startsWith("/session/") || pathname.startsWith("/players/") || pathname.startsWith("/admin")) {
     return null;
   }
 

@@ -149,6 +149,11 @@ export const en = {
     rainWarning:
       "{{percent}}% chance of rain at this time. You may want to reconsider an outdoor game.",
     disclaimer: "Forecast may change",
+    weatherTip: "Weather tip",
+    suggestReschedule:
+      "{{percent}}% rain chance at {{gameTime}}. We suggest {{suggestedTime}} ({{suggestedPercent}}% rain).",
+    noBetterTime:
+      "No clearly better time found today — consider another day or an indoor venue.",
     conditions: {
       clear: "Clear",
       cloudy: "Cloudy",
@@ -190,6 +195,14 @@ export const en = {
     email: "Email",
     logout: "Log out",
     adminPanel: "Admin panel",
+  },
+
+  publicProfile: {
+    title: "Player profile",
+    notFound: "Player not found",
+    memberSince: "Member since",
+    reliability: "Reliability",
+    editMyProfile: "Edit my profile",
   },
 
   common: {

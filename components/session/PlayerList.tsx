@@ -3,6 +3,8 @@
 import type { ParticipantWithPlayer } from "@/lib/types";
 import { reliabilityColor } from "@/lib/types";
 import { useT } from "@/lib/hooks/useLocale";
+import { PlayerAvatar } from "@/components/profile/PlayerAvatar";
+import { PlayerLink } from "@/components/profile/PlayerLink";
 
 interface PlayerListProps {
   participants: ParticipantWithPlayer[];
@@ -49,15 +51,15 @@ export function PlayerList({
                   className="h-4 w-4 rounded"
                 />
               )}
-              <div
-                className="flex h-9 w-9 items-center justify-center rounded-full text-sm font-bold text-white"
-                style={{ backgroundColor: player.avatar_color }}
-              >
-                {player.nickname.charAt(0).toUpperCase()}
-              </div>
+              <PlayerAvatar
+                id={player.id}
+                nickname={player.nickname}
+                avatarColor={player.avatar_color}
+                linkable
+              />
               <div>
-                <div className="flex items-center gap-2 font-medium">
-                  {player.nickname}
+                <div className="flex items-center gap-2">
+                  <PlayerLink id={player.id} nickname={player.nickname} />
                   {isHost && (
                     <span className="text-xs text-muted-foreground">
                       ({t.session.host})
