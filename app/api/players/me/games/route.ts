@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAdminDb } from "@/lib/firebase-admin";
 import { docData } from "@/lib/firestore/helpers";
 import { effectiveSessionStatus } from "@/lib/types";
+import { finalizeSessionStats } from "@/lib/game-stats";
 import { requireUser, isAuthUser } from "@/lib/request-auth";
 import type { Player, SessionFeed } from "@/lib/types";
 
@@ -86,52 +87,21 @@ export async function POST(req: NextRequest) {
     const body = await req.json();
     const { session_id, player_ids } = body;
 
-    if (!session_id || !Array.isArray(player_ids) || player_ids.length === 0) {
+    if (!session_id || !Array.isArray(player_ids)) {
       return NextResponse.json({ error: "Invalid request" }, { status: 400 });
     }
 
-    const db = getAdminDb();
-    const sessionRef = db.collection("sessions").doc(session_id);
-    const session = docData<SessionFeed>(await sessionRef.get());
+    const result = await finalizeSessionStats(
+      getAdminDb(),
+      session_id,
+      auth.uid,
+      player_ids
+    );
 
-    if (!session || session.host_id !== auth.uid) {
-      return NextResponse.json({ error: "Only host can mark no-shows" }, { status: 403 });
+    if ("error" in result) {
+      return NextResponse.json({ error: result.error }, { status: result.status });
     }
 
-    if (new Date(session.starts_at) >= new Date()) {
-      return NextResponse.json({ error: "Session not finished yet" }, { status: 400 });
-    }
-
-    if (session.status === "done") {
-      return NextResponse.json({ error: "Already processed" }, { status: 400 });
-    }
-
-    for (const playerId of player_ids) {
-      if (playerId === auth.uid) continue;
-      const pRef = db.collection("players").doc(playerId);
-      const pSnap = await pRef.get();
-      if (pSnap.exists) {
-        const p = docData<Player>(pSnap)!;
-        await pRef.update({ no_shows: p.no_shows + 1 });
-      }
-    }
-
-    const goingSnap = await sessionRef
-      .collection("participants")
-      .where("status", "==", "going")
-      .get();
-
-    for (const pt of goingSnap.docs) {
-      const playerId = pt.data().player_id as string;
-      const pRef = db.collection("players").doc(playerId);
-      const pSnap = await pRef.get();
-      if (pSnap.exists) {
-        const p = docData<Player>(pSnap)!;
-        await pRef.update({ games_played: p.games_played + 1 });
-      }
-    }
-
-    await sessionRef.update({ status: "done" });
     return NextResponse.json({ success: true });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Internal error";

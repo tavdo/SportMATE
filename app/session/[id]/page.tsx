@@ -106,8 +106,11 @@ export default function SessionPage() {
     (p) => p.status === "going"
   ) as ParticipantWithPlayer[];
 
+  const canFinalize =
+    isHost && isPast && session.status !== "cancelled" && session.status !== "done";
+
   async function handleMarkNoShows() {
-    if (!uid || selectedNoShows.length === 0) return;
+    if (!uid) return;
     setMarkingNoShow(true);
     try {
       await apiFetch(`/api/players/me/games`, {
@@ -216,7 +219,7 @@ export default function SessionPage() {
             hostId={session.host_id}
             selectedNoShows={selectedNoShows}
             onToggleNoShow={toggleNoShow}
-            showNoShowPicker={isHost && isPast && session.status !== "cancelled"}
+            showNoShowPicker={canFinalize}
           />
         </div>
 
@@ -232,15 +235,24 @@ export default function SessionPage() {
           )
         )}
 
-        {isHost && isPast && session.status !== "cancelled" && (
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={handleMarkNoShows}
-            disabled={markingNoShow || selectedNoShows.length === 0}
-          >
-            {t.session.markNoShow}
-          </Button>
+        {canFinalize && (
+          <div className="space-y-2">
+            <p className="text-sm text-muted-foreground">{t.session.finishGameHint}</p>
+            <Button
+              variant="outline"
+              className="w-full"
+              onClick={handleMarkNoShows}
+              disabled={markingNoShow}
+            >
+              {t.session.finishGame}
+            </Button>
+          </div>
+        )}
+
+        {session.status === "done" && (
+          <p className="text-center text-sm text-muted-foreground">
+            {t.session.gameFinished}
+          </p>
         )}
 
         <JoinButton
