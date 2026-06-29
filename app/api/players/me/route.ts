@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Account suspended" }, { status: 403 });
     }
 
-    return NextResponse.json(player);
+    return NextResponse.json({ ...player, avatar_url: player.avatar_url ?? null });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Internal error";
     return NextResponse.json({ error: message }, { status: 500 });

@@ -118,6 +118,7 @@ export async function POST(
       player_id: auth.uid,
       nickname: player.nickname,
       avatar_color: player.avatar_color,
+      avatar_url: player.avatar_url ?? null,
       text,
       created_at: new Date().toISOString(),
     };

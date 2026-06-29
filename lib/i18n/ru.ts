@@ -193,6 +193,12 @@ export const ru = {
     email: "Email",
     logout: "Выйти",
     adminPanel: "Админ-панель",
+    uploadPhoto: "Загрузить фото",
+    changePhoto: "Сменить фото",
+    removePhoto: "Удалить фото",
+    photoHint: "JPG, PNG, WEBP или GIF · макс. 10 MB",
+    photoTooLarge: "Фото слишком большое (макс. 10 MB)",
+    invalidPhotoType: "Только JPG, PNG, WEBP или GIF",
   },
 
   publicProfile: {

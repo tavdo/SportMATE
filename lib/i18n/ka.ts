@@ -192,6 +192,12 @@ export const ka = {
     email: "ელფოსტა",
     logout: "გასვლა",
     adminPanel: "ადმინ პანელი",
+    uploadPhoto: "ფოტოს ატვირთვა",
+    changePhoto: "ფოტოს შეცვლა",
+    removePhoto: "ფოტოს წაშლა",
+    photoHint: "JPG, PNG, WEBP ან GIF · მაქს. 10 MB",
+    photoTooLarge: "ფოტო ძალიან დიდია (მაქს. 10 MB)",
+    invalidPhotoType: "მხოლოდ JPG, PNG, WEBP ან GIF",
   },
 
   publicProfile: {

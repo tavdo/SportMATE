@@ -25,6 +25,7 @@ export interface Player {
   id: string;
   nickname: string;
   avatar_color: string;
+  avatar_url: string | null;
   preferred_sports: SportType[];
   gender: Gender | null;
   age_range: AgeRange | null;
@@ -42,6 +43,7 @@ export type PublicPlayer = Pick<
   | "id"
   | "nickname"
   | "avatar_color"
+  | "avatar_url"
   | "preferred_sports"
   | "gender"
   | "age_range"
@@ -56,6 +58,7 @@ export function toPublicPlayer(player: Player): PublicPlayer {
     id: player.id,
     nickname: player.nickname,
     avatar_color: player.avatar_color,
+    avatar_url: player.avatar_url ?? null,
     preferred_sports: player.preferred_sports,
     gender: player.gender,
     age_range: player.age_range,
@@ -65,6 +68,17 @@ export function toPublicPlayer(player: Player): PublicPlayer {
     created_at: player.created_at,
   };
 }
+
+export type EmbeddedPlayer = Pick<
+  Player,
+  | "id"
+  | "nickname"
+  | "avatar_color"
+  | "avatar_url"
+  | "games_played"
+  | "no_shows"
+  | "is_verified"
+>;
 
 export interface SiteSettings {
   app_name: string;
@@ -130,7 +144,7 @@ export interface Participant {
 }
 
 export interface ParticipantWithPlayer extends Participant {
-  player: Pick<Player, "id" | "nickname" | "avatar_color" | "games_played" | "no_shows" | "is_verified">;
+  player: EmbeddedPlayer;
 }
 
 export interface SessionDetail extends SessionFeed {
@@ -144,6 +158,7 @@ export interface SessionMessage {
   player_id: string;
   nickname: string;
   avatar_color: string;
+  avatar_url?: string | null;
   text: string;
   created_at: string;
 }

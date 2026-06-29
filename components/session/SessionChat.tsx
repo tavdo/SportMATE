@@ -117,6 +117,7 @@ export function SessionChat({
                     id={msg.player_id}
                     nickname={msg.nickname}
                     avatarColor={msg.avatar_color}
+                    avatarUrl={msg.avatar_url}
                     size="sm"
                     linkable={!isMine}
                   />

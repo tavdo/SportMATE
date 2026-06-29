@@ -5,6 +5,7 @@ interface PlayerAvatarProps {
   id?: string;
   nickname: string;
   avatarColor: string;
+  avatarUrl?: string | null;
   size?: "sm" | "md" | "lg";
   className?: string;
   linkable?: boolean;
@@ -20,11 +21,23 @@ export function PlayerAvatar({
   id,
   nickname,
   avatarColor,
+  avatarUrl,
   size = "md",
   className,
   linkable = false,
 }: PlayerAvatarProps) {
-  const avatar = (
+  const avatar = avatarUrl ? (
+    <img
+      src={avatarUrl}
+      alt={nickname}
+      className={cn(
+        "shrink-0 rounded-full object-cover",
+        sizeClasses[size],
+        linkable && id && "transition-opacity hover:opacity-80",
+        className
+      )}
+    />
+  ) : (
     <div
       className={cn(
         "flex shrink-0 items-center justify-center rounded-full font-bold text-white",

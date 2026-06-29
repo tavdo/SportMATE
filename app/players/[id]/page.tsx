@@ -80,6 +80,7 @@ export default function PlayerProfilePage() {
           <PlayerAvatar
             nickname={player.nickname}
             avatarColor={player.avatar_color}
+            avatarUrl={player.avatar_url}
             size="lg"
           />
           <div className="text-lg font-semibold">{player.nickname}</div>

@@ -6,6 +6,7 @@ import { SPORT_EMOJI, AVATAR_COLORS } from "@/lib/types";
 import { useT } from "@/lib/hooks/useLocale";
 import { GenderPicker, genderLabel } from "@/components/profile/GenderPicker";
 import { AgeRangePicker, ageRangeLabel } from "@/components/profile/AgeRangePicker";
+import { AvatarUpload } from "@/components/profile/AvatarUpload";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { createOrUpdatePlayer } from "@/lib/api";
 import { signOutUser } from "@/lib/auth-client";
@@ -81,13 +82,16 @@ export default function ProfilePage() {
       </header>
 
       <div className="p-4 space-y-6">
-        <div className="flex flex-col items-center gap-3 py-4">
-          <div
-            className="flex h-20 w-20 items-center justify-center rounded-full text-3xl font-bold text-white"
-            style={{ backgroundColor: editing ? color : player.avatar_color }}
-          >
-            {(editing ? nickname : player.nickname).charAt(0).toUpperCase()}
-          </div>
+        <AvatarUpload
+          player={player}
+          nickname={editing ? nickname : player.nickname}
+          avatarColor={editing ? color : player.avatar_color}
+          onUpdated={(updated) => {
+            setPlayer(updated);
+            refresh();
+          }}
+        />
+        <div className="flex flex-col items-center gap-1 text-center">
           <div className="text-lg font-semibold">
             {editing ? nickname : player.nickname}
           </div>

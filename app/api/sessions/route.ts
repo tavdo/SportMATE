@@ -3,6 +3,7 @@ import { getAdminDb } from "@/lib/firebase-admin";
 import { docData, filterSessionFeed } from "@/lib/firestore/helpers";
 import { effectiveSessionStatus } from "@/lib/types";
 import type { Player, SessionFeed, Venue } from "@/lib/types";
+import { embedPlayer } from "@/lib/player-embed";
 import { requireUser, isAuthUser } from "@/lib/request-auth";
 import { tFromRequest } from "@/lib/i18n/server";
 
@@ -98,14 +99,7 @@ export async function POST(req: NextRequest) {
       player_id: auth.uid,
       status: "going",
       joined_at: now,
-      player: {
-        id: host.id,
-        nickname: host.nickname,
-        avatar_color: host.avatar_color,
-        games_played: host.games_played,
-        no_shows: host.no_shows,
-        is_verified: host.is_verified,
-      },
+      player: embedPlayer(host),
     });
     await batch.commit();
 

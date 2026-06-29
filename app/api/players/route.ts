@@ -39,6 +39,7 @@ export async function POST(req: NextRequest) {
       nickname: nickname.trim(),
       preferred_sports,
       avatar_color: avatar_color ?? "#22c55e",
+      avatar_url: null,
       gender,
       age_range,
       games_played: 0,
@@ -59,12 +60,13 @@ export async function POST(req: NextRequest) {
       player.games_played = prev.games_played;
       player.no_shows = prev.no_shows;
       player.created_at = prev.created_at;
+      player.avatar_url = prev.avatar_url ?? null;
       player.phone_number = auth.phone || prev.phone_number;
       player.email = auth.email || prev.email;
     }
 
     await db.collection("players").doc(auth.uid).set(player);
-    return NextResponse.json(player);
+    return NextResponse.json({ ...player, avatar_url: player.avatar_url ?? null });
   } catch (err) {
     if (err instanceof Error && err.message === "FIREBASE_NOT_CONFIGURED") {
       return NextResponse.json(

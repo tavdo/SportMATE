@@ -195,6 +195,12 @@ export const en = {
     email: "Email",
     logout: "Log out",
     adminPanel: "Admin panel",
+    uploadPhoto: "Upload photo",
+    changePhoto: "Change photo",
+    removePhoto: "Remove photo",
+    photoHint: "JPG, PNG, WEBP or GIF · max 10 MB",
+    photoTooLarge: "Photo is too large (max 10 MB)",
+    invalidPhotoType: "Only JPG, PNG, WEBP or GIF allowed",
   },
 
   publicProfile: {

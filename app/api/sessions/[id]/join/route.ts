@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getAdminDb } from "@/lib/firebase-admin";
 import { docData } from "@/lib/firestore/helpers";
 import { requireUser, isAuthUser } from "@/lib/request-auth";
+import { embedPlayer } from "@/lib/player-embed";
 import type { Player, SessionFeed } from "@/lib/types";
 
 export async function POST(
@@ -62,14 +63,7 @@ export async function POST(
       player_id: auth.uid,
       status: "going",
       joined_at: now,
-      player: {
-        id: player.id,
-        nickname: player.nickname,
-        avatar_color: player.avatar_color,
-        games_played: player.games_played,
-        no_shows: player.no_shows,
-        is_verified: player.is_verified,
-      },
+      player: embedPlayer(player),
     });
 
     const newCount = currentCount + 1;

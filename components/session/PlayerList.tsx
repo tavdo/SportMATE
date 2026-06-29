@@ -55,6 +55,7 @@ export function PlayerList({
                 id={player.id}
                 nickname={player.nickname}
                 avatarColor={player.avatar_color}
+                avatarUrl={player.avatar_url}
                 linkable
               />
               <div>
