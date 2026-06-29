@@ -15,6 +15,7 @@ import { collection, onSnapshot } from "firebase/firestore";
 import { formatDateTime } from "@/lib/utils";
 import { PlayerList } from "@/components/session/PlayerList";
 import { JoinButton } from "@/components/session/JoinButton";
+import { SessionChat } from "@/components/session/SessionChat";
 import { GameWeatherCard } from "@/components/weather/GameWeather";
 import { useGameWeather } from "@/lib/hooks/useGameWeather";
 import { Button } from "@/components/ui/button";
@@ -218,6 +219,18 @@ export default function SessionPage() {
             showNoShowPicker={isHost && isPast && session.status !== "cancelled"}
           />
         </div>
+
+        {isJoined && uid && session.status !== "cancelled" ? (
+          <SessionChat sessionId={sessionId} currentUserId={uid} />
+        ) : (
+          !isJoined &&
+          uid &&
+          session.status !== "cancelled" && (
+            <p className="rounded-xl border bg-muted/30 px-4 py-3 text-center text-sm text-muted-foreground">
+              {t.session.chatJoinToSee}
+            </p>
+          )
+        )}
 
         {isHost && isPast && session.status !== "cancelled" && (
           <Button

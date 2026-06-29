@@ -86,6 +86,12 @@ export const ru = {
     note: "Заметка",
     skillLevel: "Уровень",
     spots: "Места",
+    chat: "Чат",
+    chatHint: "Видят только участники этой игры",
+    chatEmpty: "Пока нет сообщений — напиши первым",
+    chatPlaceholder: "Сообщение...",
+    chatSend: "Отправить",
+    chatJoinToSee: "Вступи в игру, чтобы видеть чат",
   },
 
   create: {

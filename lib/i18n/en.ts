@@ -88,6 +88,12 @@ export const en = {
     note: "Note",
     skillLevel: "Skill level",
     spots: "Spots",
+    chat: "Chat",
+    chatHint: "Only players in this game can see messages",
+    chatEmpty: "No messages yet — say hi",
+    chatPlaceholder: "Message...",
+    chatSend: "Send",
+    chatJoinToSee: "Join the game to see the chat",
   },
 
   create: {

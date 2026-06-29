@@ -85,6 +85,12 @@ export const ka = {
     note: "შენიშვნა",
     skillLevel: "დონე",
     spots: "ადგილები",
+    chat: "ჩატი",
+    chatHint: "მხოლოდ ამ თამაშის მოთამაშეებს ჩანს",
+    chatEmpty: "ჯერ არავინ დაწერა — დაიწყე შენ",
+    chatPlaceholder: "შეტყობინება...",
+    chatSend: "გაგზავნა",
+    chatJoinToSee: "ჩატის სანახავად ჯერ ჩაეწერე თამაშში",
   },
 
   create: {

@@ -89,6 +89,16 @@ export interface SessionDetail extends SessionFeed {
   participants: ParticipantWithPlayer[];
 }
 
+export interface SessionMessage {
+  id: string;
+  session_id: string;
+  player_id: string;
+  nickname: string;
+  avatar_color: string;
+  text: string;
+  created_at: string;
+}
+
 export const SPORT_COLORS: Record<SportType, string> = {
   football: "#22c55e",
   basketball: "#f97316",
