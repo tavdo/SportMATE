@@ -197,6 +197,8 @@ export const en = {
     cancel: "Cancel",
     loading: "Loading...",
     back: "Back",
+    showPassword: "Show password",
+    hidePassword: "Hide password",
   },
 
   status: {

@@ -194,6 +194,8 @@ export const ka = {
     cancel: "გაუქმება",
     loading: "იტვირთება...",
     back: "უკან",
+    showPassword: "პაროლის ჩვენება",
+    hidePassword: "პაროლის დამალვა",
   },
 
   status: {

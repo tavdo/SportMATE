@@ -195,6 +195,8 @@ export const ru = {
     cancel: "Отмена",
     loading: "Загрузка...",
     back: "Назад",
+    showPassword: "Показать пароль",
+    hidePassword: "Скрыть пароль",
   },
 
   status: {
