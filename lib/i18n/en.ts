@@ -52,6 +52,7 @@ export const en = {
     football: "Football",
     basketball: "Basketball",
     volleyball: "Volleyball",
+    karting: "Karting",
   } satisfies Record<SportType, string>,
 
   skill: {

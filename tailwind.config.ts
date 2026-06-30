@@ -13,6 +13,7 @@ const config: Config = {
         football: "#22c55e",
         basketball: "#f97316",
         volleyball: "#3b82f6",
+        karting: "#dc2626",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {

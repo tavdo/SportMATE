@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 import type { SportType, Venue } from "@/lib/types";
-import { SPORT_EMOJI } from "@/lib/types";
+import { SPORT_EMOJI, SPORT_TYPES } from "@/lib/types";
 import { apiFetch } from "@/lib/api";
 import { useT } from "@/lib/hooks/useLocale";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
-const sports: SportType[] = ["football", "basketball", "volleyball"];
+const sports = SPORT_TYPES;
 
 const VenueLocationPicker = dynamic(
   () =>

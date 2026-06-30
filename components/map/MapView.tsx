@@ -6,7 +6,7 @@ import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
 import MarkerClusterGroup from "react-leaflet-cluster";
 import Link from "next/link";
 import type { SessionFeed, SportType } from "@/lib/types";
-import { SPORT_COLORS, SPORT_EMOJI } from "@/lib/types";
+import { SPORT_COLORS, SPORT_EMOJI, SPORT_TYPES } from "@/lib/types";
 import { useLocale, useT } from "@/lib/hooks/useLocale";
 import { formatDateTime } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -53,11 +53,10 @@ export function MapView({ sessions, loading }: MapViewProps) {
   const { locale } = useLocale();
 
   const icons = useMemo(
-    () => ({
-      football: createSportIcon("football"),
-      basketball: createSportIcon("basketball"),
-      volleyball: createSportIcon("volleyball"),
-    }),
+    () =>
+      Object.fromEntries(
+        SPORT_TYPES.map((sport) => [sport, createSportIcon(sport)])
+      ) as Record<SportType, L.DivIcon>,
     []
   );
 

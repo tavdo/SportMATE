@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import type { SportType, Gender, AgeRange } from "@/lib/types";
-import { SPORT_EMOJI, AVATAR_COLORS } from "@/lib/types";
+import { SPORT_EMOJI, SPORT_TYPES, AVATAR_COLORS } from "@/lib/types";
 import { useT } from "@/lib/hooks/useLocale";
 import { GenderPicker, genderLabel } from "@/components/profile/GenderPicker";
 import { AgeRangePicker, ageRangeLabel } from "@/components/profile/AgeRangePicker";
@@ -18,7 +18,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-const sports: SportType[] = ["football", "basketball", "volleyball"];
+const sports = SPORT_TYPES;
 
 export default function ProfilePage() {
   const { player, refresh, setPlayer } = usePlayer();

@@ -1,7 +1,7 @@
 "use client";
 
 import type { SportType, SkillLevel } from "@/lib/types";
-import { SPORT_EMOJI } from "@/lib/types";
+import { SPORT_EMOJI, SPORT_TYPES } from "@/lib/types";
 import { useT } from "@/lib/hooks/useLocale";
 import { cn } from "@/lib/utils";
 
@@ -14,7 +14,7 @@ interface FilterBarProps {
   onSkillChange: (skill: SkillLevel | null) => void;
 }
 
-const sports: (SportType | null)[] = [null, "football", "basketball", "volleyball"];
+const sports: (SportType | null)[] = [null, ...SPORT_TYPES];
 const skills: (SkillLevel | null)[] = [null, "beginner", "intermediate", "advanced"];
 
 export function FilterBar({

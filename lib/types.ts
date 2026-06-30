@@ -1,4 +1,11 @@
-export type SportType = "football" | "basketball" | "volleyball";
+export type SportType = "football" | "basketball" | "volleyball" | "karting";
+
+export const SPORT_TYPES: SportType[] = [
+  "football",
+  "basketball",
+  "volleyball",
+  "karting",
+];
 export type SkillLevel = "any" | "beginner" | "intermediate" | "advanced";
 export type Gender = "male" | "female" | "other" | "prefer_not_to_say";
 export type SessionStatus = "open" | "full" | "cancelled" | "done";
@@ -167,12 +174,14 @@ export const SPORT_COLORS: Record<SportType, string> = {
   football: "#22c55e",
   basketball: "#f97316",
   volleyball: "#3b82f6",
+  karting: "#dc2626",
 };
 
 export const SPORT_EMOJI: Record<SportType, string> = {
   football: "⚽",
   basketball: "🏀",
   volleyball: "🏐",
+  karting: "🏎️",
 };
 
 export const AVATAR_COLORS = [

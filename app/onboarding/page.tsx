@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { useT } from "@/lib/hooks/useLocale";
 import { useAuth } from "@/lib/hooks/useAuth";
 import { usePlayer } from "@/lib/hooks/usePlayer";
-import { AVATAR_COLORS, SPORT_EMOJI, type SportType, type Gender, type AgeRange } from "@/lib/types";
+import { AVATAR_COLORS, SPORT_EMOJI, SPORT_TYPES, type SportType, type Gender, type AgeRange } from "@/lib/types";
 import {
   normalizeGeorgianDigits,
   isValidGeorgianMobile,
@@ -28,7 +28,7 @@ import { PasswordInput } from "@/components/ui/password-input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
-const sports: SportType[] = ["football", "basketball", "volleyball"];
+const sports = SPORT_TYPES;
 
 type AuthMethod = "phone" | "email";
 type Step = "auth" | "profile";

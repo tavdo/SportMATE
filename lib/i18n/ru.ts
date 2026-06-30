@@ -50,6 +50,7 @@ export const ru = {
     football: "Футбол",
     basketball: "Баскетбол",
     volleyball: "Волейбол",
+    karting: "Картинг",
   } satisfies Record<SportType, string>,
 
   skill: {
