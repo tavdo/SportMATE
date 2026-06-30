@@ -50,6 +50,9 @@ export const ka = {
     basketball: "კალათბურთი",
     volleyball: "ფრენბურთი",
     karting: "კარტინგი",
+    airsoft: "ეირსოფტი",
+    paintball: "პეინტბოლი",
+    billiards: "ბილიარდი",
   } satisfies Record<SportType, string>,
 
   skill: {

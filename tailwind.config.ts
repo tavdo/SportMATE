@@ -14,6 +14,9 @@ const config: Config = {
         basketball: "#f97316",
         volleyball: "#3b82f6",
         karting: "#dc2626",
+        airsoft: "#65a30d",
+        paintball: "#a855f7",
+        billiards: "#0f766e",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         card: {

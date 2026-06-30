@@ -1,10 +1,20 @@
-export type SportType = "football" | "basketball" | "volleyball" | "karting";
+export type SportType =
+  | "football"
+  | "basketball"
+  | "volleyball"
+  | "karting"
+  | "airsoft"
+  | "paintball"
+  | "billiards";
 
 export const SPORT_TYPES: SportType[] = [
   "football",
   "basketball",
   "volleyball",
   "karting",
+  "airsoft",
+  "paintball",
+  "billiards",
 ];
 export type SkillLevel = "any" | "beginner" | "intermediate" | "advanced";
 export type Gender = "male" | "female" | "other" | "prefer_not_to_say";
@@ -175,6 +185,9 @@ export const SPORT_COLORS: Record<SportType, string> = {
   basketball: "#f97316",
   volleyball: "#3b82f6",
   karting: "#dc2626",
+  airsoft: "#65a30d",
+  paintball: "#a855f7",
+  billiards: "#0f766e",
 };
 
 export const SPORT_EMOJI: Record<SportType, string> = {
@@ -182,6 +195,9 @@ export const SPORT_EMOJI: Record<SportType, string> = {
   basketball: "🏀",
   volleyball: "🏐",
   karting: "🏎️",
+  airsoft: "🎯",
+  paintball: "💥",
+  billiards: "🎱",
 };
 
 export const AVATAR_COLORS = [
